@@ -20,496 +20,212 @@
     }
 
     h1 {
-      font-size: 2rem;
-      font-weight: 800;
-      letter-spacing: 0.1em;
+      font-size: 2rem; font-weight: 800; letter-spacing: 0.1em;
       background: linear-gradient(135deg, #38bdf8, #818cf8);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       margin-bottom: 0.25rem;
     }
-
     .subtitle { color: #64748b; font-size: 0.9rem; margin-bottom: 1.25rem; }
 
     /* ── Mode tabs ── */
     .mode-tabs {
-      display: flex;
-      gap: 0.5rem;
-      background: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 0.75rem;
-      padding: 0.35rem;
-      margin-bottom: 1.5rem;
+      display: flex; gap: 0.5rem;
+      background: #1e293b; border: 1px solid #334155;
+      border-radius: 0.75rem; padding: 0.35rem; margin-bottom: 1.5rem;
     }
-
     .mode-tab {
-      background: transparent;
-      border: none;
-      border-radius: 0.5rem;
-      padding: 0.5rem 1rem;
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: #64748b;
-      cursor: pointer;
-      transition: all 0.2s;
-      white-space: nowrap;
+      background: transparent; border: none; border-radius: 0.5rem;
+      padding: 0.5rem 1rem; font-size: 0.85rem; font-weight: 700;
+      color: #64748b; cursor: pointer; transition: all 0.2s; white-space: nowrap;
     }
-
     .mode-tab:hover { color: #e2e8f0; }
-    .mode-tab.active {
-      background: linear-gradient(135deg, #38bdf8, #818cf8);
-      color: #0f172a;
-    }
+    .mode-tab.active { background: linear-gradient(135deg, #38bdf8, #818cf8); color: #0f172a; }
 
     .mode-panel { display: none; width: 100%; max-width: 640px; }
     .mode-panel.active { display: block; }
 
-    /* ── Shared card ── */
+    /* ── Shared ── */
     .card {
-      background: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 1rem;
-      padding: 1.75rem;
-      width: 100%;
+      background: #1e293b; border: 1px solid #334155;
+      border-radius: 1rem; padding: 1.75rem; width: 100%;
       box-shadow: 0 20px 60px rgba(0,0,0,0.4);
     }
-
     .btn {
       background: linear-gradient(135deg, #38bdf8, #818cf8);
-      border: none;
-      border-radius: 0.6rem;
-      padding: 0.75rem 1.25rem;
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: #0f172a;
-      cursor: pointer;
-      transition: opacity 0.2s, transform 0.1s;
-      white-space: nowrap;
+      border: none; border-radius: 0.6rem; padding: 0.75rem 1.25rem;
+      font-size: 0.95rem; font-weight: 700; color: #0f172a;
+      cursor: pointer; transition: opacity 0.2s, transform 0.1s; white-space: nowrap;
     }
-
     .btn:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
     .btn:active:not(:disabled) { transform: translateY(0); }
-    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-    .btn-secondary {
-      background: #334155;
-      color: #94a3b8;
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-secondary { background: #334155; color: #94a3b8; }
+    .btn-cam {
+      background: #334155; color: #94a3b8; border: none;
+      border-radius: 0.6rem; padding: 0.65rem 0.9rem;
+      font-size: 1.1rem; cursor: pointer; transition: background 0.2s; line-height: 1;
     }
+    .btn-cam:hover { background: #475569; color: #e2e8f0; }
 
-    .loader {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      color: #64748b;
-      font-size: 0.85rem;
-      margin-top: 0.5rem;
-    }
-
+    .loader { display: flex; align-items: center; gap: 0.5rem; color: #64748b; font-size: 0.85rem; margin-bottom: 1rem; }
     .spinner {
-      width: 14px; height: 14px;
-      border: 2px solid #334155;
-      border-top-color: #38bdf8;
-      border-radius: 50%;
+      width: 14px; height: 14px; border: 2px solid #334155;
+      border-top-color: #38bdf8; border-radius: 50%;
       animation: spin 0.7s linear infinite;
     }
 
-    @keyframes spin { to { transform: rotate(360deg); } }
-    @keyframes pop {
-      from { transform: scale(0.7); opacity: 0; }
-      to   { transform: scale(1);   opacity: 1; }
-    }
-    @keyframes shake {
-      0%,100% { transform: translateX(0); }
-      20%,60% { transform: translateX(-6px); }
-      40%,80% { transform: translateX(6px); }
-    }
-    @keyframes flip {
-      0%   { transform: rotateX(0); }
-      50%  { transform: rotateX(-90deg); }
-      100% { transform: rotateX(0); }
-    }
+    @keyframes spin  { to { transform: rotate(360deg); } }
+    @keyframes pop   { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    @keyframes shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-6px)} 40%,80%{transform:translateX(6px)} }
+    @keyframes flip  { 0%{transform:rotateX(0)} 50%{transform:rotateX(-90deg)} 100%{transform:rotateX(0)} }
 
-    /* ═══════════════════════════════════════════
-       SCRAMBLE MODE
-    ═══════════════════════════════════════════ */
-    .input-row {
-      display: flex;
-      gap: 0.75rem;
-      align-items: center;
-    }
-
+    /* ═══ SCRAMBLE ═══ */
+    .input-row { display: flex; gap: 0.75rem; align-items: center; }
     .letter-input {
-      flex: 1;
-      background: #0f172a;
-      border: 2px solid #334155;
-      border-radius: 0.6rem;
-      padding: 0.75rem 1rem;
-      font-size: 1.5rem;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      color: #f0f9ff;
-      text-transform: uppercase;
-      outline: none;
-      transition: border-color 0.2s;
+      flex: 1; background: #0f172a; border: 2px solid #334155;
+      border-radius: 0.6rem; padding: 0.75rem 1rem;
+      font-size: 1.5rem; font-weight: 700; letter-spacing: 0.2em;
+      color: #f0f9ff; text-transform: uppercase; outline: none; transition: border-color 0.2s;
     }
-
     .letter-input:focus { border-color: #38bdf8; }
     .letter-input::placeholder { color: #334155; font-weight: 400; letter-spacing: 0.05em; font-size: 1rem; }
-
     .btn-clear { background: #334155; color: #94a3b8; padding: 0.75rem 0.9rem; font-size: 1.1rem; }
 
-    .char-tiles {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-      margin-top: 1rem;
-      min-height: 2.5rem;
-    }
-
+    .char-tiles { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1rem; min-height: 2.5rem; }
     .tile {
       background: linear-gradient(135deg, #1d4ed8, #6d28d9);
-      border-radius: 0.4rem;
-      width: 2.4rem;
-      height: 2.4rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      font-size: 1.1rem;
-      color: #fff;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-      animation: pop 0.15s ease;
+      border-radius: 0.4rem; width: 2.4rem; height: 2.4rem;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 1.1rem; color: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3); animation: pop 0.15s ease;
     }
-
     .tile-qu { width: 3.6rem; font-size: 0.95rem; }
 
     .status-bar { margin-top: 1rem; font-size: 0.85rem; color: #64748b; min-height: 1.2em; }
     .status-bar .highlight { color: #38bdf8; font-weight: 600; }
     .error-msg { color: #f87171; font-size: 0.82rem; margin-top: 0.4rem; }
 
-    /* Results */
     .results-wrapper { width: 100%; max-width: 640px; margin-top: 1.5rem; }
-
-    .results-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 0.75rem;
-    }
-
-    .results-header h2 {
-      font-size: 1rem;
-      font-weight: 700;
-      color: #94a3b8;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-
-    .total-badge {
-      background: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 999px;
-      padding: 0.2rem 0.7rem;
-      font-size: 0.8rem;
-      color: #38bdf8;
-      font-weight: 700;
-    }
+    .results-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
+    .results-header h2 { font-size: 1rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em; }
+    .total-badge { background: #1e293b; border: 1px solid #334155; border-radius: 999px; padding: 0.2rem 0.7rem; font-size: 0.8rem; color: #38bdf8; font-weight: 700; }
 
     .filter-bar { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.85rem; }
-
-    .filter-btn {
-      background: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 999px;
-      padding: 0.25rem 0.7rem;
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: #94a3b8;
-      cursor: pointer;
-      transition: all 0.15s;
-      white-space: nowrap;
-    }
-
+    .filter-btn { background: #1e293b; border: 1px solid #334155; border-radius: 999px; padding: 0.25rem 0.7rem; font-size: 0.75rem; font-weight: 600; color: #94a3b8; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
     .filter-btn:hover { border-color: #64748b; color: #e2e8f0; }
     .filter-btn.active { color: #fff; border-color: transparent; }
 
-    .cat-tag {
-      display: inline-block;
-      font-size: 0.58rem;
-      font-weight: 700;
-      padding: 0.1rem 0.3rem;
-      border-radius: 0.2rem;
-      margin-left: 0.3rem;
-      vertical-align: middle;
-      letter-spacing: 0.02em;
-      opacity: 0.9;
-    }
+    .cat-tag { display: inline-block; font-size: 0.58rem; font-weight: 700; padding: 0.1rem 0.3rem; border-radius: 0.2rem; margin-left: 0.3rem; vertical-align: middle; opacity: 0.9; }
 
-    .length-group {
-      background: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 0.75rem;
-      margin-bottom: 0.75rem;
-      overflow: hidden;
-    }
-
-    .length-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.6rem 1rem;
-      background: #0f172a;
-      cursor: pointer;
-      user-select: none;
-      transition: background 0.15s;
-    }
-
+    .length-group { background: #1e293b; border: 1px solid #334155; border-radius: 0.75rem; margin-bottom: 0.75rem; overflow: hidden; }
+    .length-header { display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 1rem; background: #0f172a; cursor: pointer; user-select: none; transition: background 0.15s; }
     .length-header:hover { background: #172033; }
     .length-label { font-weight: 700; font-size: 0.9rem; color: #818cf8; }
     .length-count { font-size: 0.78rem; color: #64748b; }
     .chevron { font-size: 0.7rem; color: #475569; transition: transform 0.2s; }
     .length-group.collapsed .chevron { transform: rotate(-90deg); }
     .length-group.collapsed .word-grid { display: none; }
-
     .word-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0.75rem 1rem; }
-
-    .word-chip {
-      background: #0f172a;
-      border: 1px solid #334155;
-      border-radius: 0.4rem;
-      padding: 0.3rem 0.6rem;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: #cbd5e1;
-      letter-spacing: 0.04em;
-      transition: border-color 0.15s, color 0.15s;
-      cursor: default;
-      display: flex;
-      align-items: center;
-    }
-
+    .word-chip { background: #0f172a; border: 1px solid #334155; border-radius: 0.4rem; padding: 0.3rem 0.6rem; font-size: 0.85rem; font-weight: 600; color: #cbd5e1; letter-spacing: 0.04em; transition: border-color 0.15s, color 0.15s; cursor: default; display: flex; align-items: center; }
     .word-chip:hover { border-color: #818cf8; color: #a5b4fc; }
-
     .empty-state { text-align: center; padding: 2rem; color: #475569; font-size: 0.9rem; }
 
-    /* ═══════════════════════════════════════════
-       WORD GUESS MODE (Wordle)
-    ═══════════════════════════════════════════ */
-    .wg-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
-      align-items: center;
-      margin-bottom: 1.25rem;
-    }
-
-    .wg-row {
-      display: flex;
-      gap: 0.4rem;
-    }
-
+    /* ═══ WORD GUESS SOLVER ═══ */
+    .wg-solver-desc { font-size: 0.82rem; color: #64748b; text-align: center; line-height: 1.5; margin-bottom: 1rem; }
+    .wg-grid { display: flex; flex-direction: column; gap: 0.4rem; align-items: center; margin-bottom: 1rem; }
+    .wg-row { display: flex; gap: 0.4rem; }
     .wg-cell {
-      width: 3rem;
-      height: 3rem;
-      border: 2px solid #334155;
-      border-radius: 0.4rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.3rem;
-      font-weight: 800;
-      color: #f0f9ff;
-      text-transform: uppercase;
-      transition: border-color 0.1s;
-      perspective: 250px;
+      width: 3rem; height: 3rem; border: 2px solid #334155; border-radius: 0.4rem;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; font-weight: 800; color: #f0f9ff; text-transform: uppercase;
+      cursor: pointer; user-select: none; transition: border-color 0.1s;
     }
+    .wg-cell.correct { background: #15803d; border-color: #15803d; }
+    .wg-cell.present { background: #b45309; border-color: #b45309; }
+    .wg-cell.absent  { background: #334155; border-color: #334155; }
+    .wg-cell:hover { opacity: 0.85; }
 
-    .wg-cell.filled { border-color: #64748b; animation: pop 0.1s ease; }
-    .wg-cell.correct { background: #15803d; border-color: #15803d; animation: flip 0.4s ease; }
-    .wg-cell.present { background: #b45309; border-color: #b45309; animation: flip 0.4s ease; }
-    .wg-cell.absent  { background: #334155; border-color: #334155; animation: flip 0.4s ease; }
-
-    .wg-row.shake { animation: shake 0.4s ease; }
-
-    .wg-input-row {
-      display: flex;
-      gap: 0.6rem;
-      margin-bottom: 0.75rem;
-    }
-
+    .wg-input-row { display: flex; gap: 0.6rem; margin-bottom: 0.6rem; }
     .wg-input {
-      flex: 1;
-      background: #0f172a;
-      border: 2px solid #334155;
-      border-radius: 0.6rem;
-      padding: 0.7rem 1rem;
-      font-size: 1.4rem;
-      font-weight: 700;
-      letter-spacing: 0.25em;
-      color: #f0f9ff;
-      text-transform: uppercase;
-      outline: none;
-      transition: border-color 0.2s;
-      text-align: center;
+      flex: 1; background: #0f172a; border: 2px solid #334155; border-radius: 0.6rem;
+      padding: 0.7rem 1rem; font-size: 1.4rem; font-weight: 700; letter-spacing: 0.25em;
+      color: #f0f9ff; text-transform: uppercase; outline: none; transition: border-color 0.2s; text-align: center;
     }
-
     .wg-input:focus { border-color: #38bdf8; }
+    .wg-message { text-align: center; font-size: 0.85rem; font-weight: 700; min-height: 1.4em; margin-bottom: 0.5rem; color: #fbbf24; }
 
-    .wg-message {
-      text-align: center;
-      font-size: 0.9rem;
-      font-weight: 700;
-      min-height: 1.5em;
-      margin-bottom: 0.5rem;
-    }
+    .wg-candidates { margin-top: 1rem; }
+    .wg-cand-header { font-size: 0.78rem; color: #64748b; font-weight: 600; margin-bottom: 0.4rem; }
+    .wg-cand-best { font-size: 1.15rem; font-weight: 800; color: #38bdf8; letter-spacing: 0.12em; margin-bottom: 0.5rem; }
+    .wg-cand-list { display: flex; flex-wrap: wrap; gap: 0.35rem; max-height: 130px; overflow-y: auto; }
+    .wg-cand-chip { background: #0f172a; border: 1px solid #334155; border-radius: 0.3rem; padding: 0.2rem 0.5rem; font-size: 0.8rem; font-weight: 600; color: #94a3b8; cursor: pointer; transition: border-color 0.1s, color 0.1s; }
+    .wg-cand-chip:hover { border-color: #38bdf8; color: #e2e8f0; }
 
-    .wg-message.win  { color: #4ade80; }
-    .wg-message.lose { color: #f87171; }
-    .wg-message.info { color: #fbbf24; }
+    .wg-legend { display: flex; gap: 1rem; justify-content: center; margin-top: 1rem; flex-wrap: wrap; }
+    .wg-legend-item { display: flex; align-items: center; gap: 0.35rem; font-size: 0.75rem; color: #64748b; }
+    .wg-legend-dot { width: 0.9rem; height: 0.9rem; border-radius: 0.2rem; }
 
-    .wg-legend {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      margin-top: 0.75rem;
-      flex-wrap: wrap;
-    }
-
-    .wg-legend-item {
-      display: flex;
-      align-items: center;
-      gap: 0.35rem;
-      font-size: 0.75rem;
-      color: #64748b;
-    }
-
-    .wg-legend-dot {
-      width: 0.9rem;
-      height: 0.9rem;
-      border-radius: 0.2rem;
-    }
-
-    /* ═══════════════════════════════════════════
-       LETTER BLOCKS MODE
-    ═══════════════════════════════════════════ */
-    .lb-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 1rem;
-    }
-
-    .lb-score {
-      font-size: 1.1rem;
-      font-weight: 800;
-      color: #38bdf8;
-    }
-
+    /* ═══ LETTER BLOCKS ═══ */
+    .lb-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+    .lb-score { font-size: 1.1rem; font-weight: 800; color: #38bdf8; }
     .lb-score span { font-size: 0.75rem; color: #64748b; font-weight: 600; }
-
-    .lb-tiles {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 0.4rem;
-      margin-bottom: 1rem;
-    }
-
+    .lb-tiles { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.4rem; margin-bottom: 1rem; }
     .lb-tile {
-      aspect-ratio: 1;
-      background: linear-gradient(135deg, #1d4ed8, #6d28d9);
-      border-radius: 0.4rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      font-size: 1.1rem;
-      color: #fff;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-      transition: opacity 0.3s, transform 0.3s;
-      user-select: none;
+      aspect-ratio: 1; background: linear-gradient(135deg, #1d4ed8, #6d28d9);
+      border-radius: 0.4rem; display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 1.1rem; color: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3); transition: opacity 0.3s, transform 0.3s; user-select: none;
     }
-
-    .lb-tile.used {
-      opacity: 0.2;
-      transform: scale(0.9);
-      background: #334155;
-      box-shadow: none;
-    }
-
+    .lb-tile.used { opacity: 0.2; transform: scale(0.9); background: #334155; box-shadow: none; }
     .lb-tile.qu { font-size: 0.78rem; }
 
-    .lb-input-row {
-      display: flex;
-      gap: 0.6rem;
-      margin-bottom: 0.75rem;
-    }
-
-    .lb-input {
-      flex: 1;
-      background: #0f172a;
-      border: 2px solid #334155;
-      border-radius: 0.6rem;
-      padding: 0.65rem 1rem;
-      font-size: 1.2rem;
-      font-weight: 700;
-      letter-spacing: 0.15em;
-      color: #f0f9ff;
-      text-transform: uppercase;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-
+    .lb-input-row { display: flex; gap: 0.6rem; margin-bottom: 0.75rem; }
+    .lb-input { flex: 1; background: #0f172a; border: 2px solid #334155; border-radius: 0.6rem; padding: 0.65rem 1rem; font-size: 1.2rem; font-weight: 700; letter-spacing: 0.15em; color: #f0f9ff; text-transform: uppercase; outline: none; transition: border-color 0.2s; }
     .lb-input:focus { border-color: #38bdf8; }
-
-    .lb-message {
-      font-size: 0.85rem;
-      font-weight: 700;
-      min-height: 1.3em;
-      margin-bottom: 0.5rem;
-    }
-
+    .lb-message { font-size: 0.85rem; font-weight: 700; min-height: 1.3em; margin-bottom: 0.5rem; }
     .lb-message.good { color: #4ade80; }
     .lb-message.bad  { color: #f87171; }
 
-    .lb-found {
-      margin-top: 1rem;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-    }
+    .lb-suggest-panel { margin-top: 1rem; display: none; }
+    .lb-suggest-panel.show { display: block; }
+    .lb-suggest-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; }
+    .lb-suggest-header span { font-size: 0.78rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+    .lb-suggest-close { background: none; border: none; color: #475569; cursor: pointer; font-size: 1rem; padding: 0; }
+    .lb-suggest-close:hover { color: #94a3b8; }
+    .lb-suggest-groups { display: flex; flex-direction: column; gap: 0.4rem; max-height: 260px; overflow-y: auto; }
+    .lb-suggest-row { display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; }
+    .lb-suggest-len { font-size: 0.7rem; font-weight: 700; color: #818cf8; min-width: 1.8rem; }
+    .lb-suggest-chip { background: #0f172a; border: 1px solid #2d3f55; border-radius: 0.3rem; padding: 0.2rem 0.5rem; font-size: 0.8rem; font-weight: 600; color: #94a3b8; cursor: pointer; transition: border-color 0.1s, color 0.1s; }
+    .lb-suggest-chip:hover { border-color: #38bdf8; color: #e2e8f0; }
 
-    .lb-word-chip {
-      background: #0f172a;
-      border: 1px solid #334155;
-      border-radius: 0.4rem;
-      padding: 0.25rem 0.55rem;
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: #94a3b8;
-      display: flex;
-      align-items: center;
-      gap: 0.3rem;
-      animation: pop 0.2s ease;
-    }
+    .lb-found { margin-top: 1rem; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .lb-word-chip { background: #0f172a; border: 1px solid #334155; border-radius: 0.4rem; padding: 0.25rem 0.55rem; font-size: 0.8rem; font-weight: 600; color: #94a3b8; display: flex; align-items: center; gap: 0.3rem; animation: pop 0.2s ease; }
+    .lb-pts { font-size: 0.65rem; color: #38bdf8; font-weight: 700; }
 
-    .lb-pts {
-      font-size: 0.65rem;
-      color: #38bdf8;
-      font-weight: 700;
-    }
+    /* ═══ SCAN MODAL ═══ */
+    .scan-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 100; align-items: center; justify-content: center; padding: 1rem; }
+    .scan-overlay.open { display: flex; }
+    .scan-modal { background: #1e293b; border: 1px solid #334155; border-radius: 1rem; padding: 1.5rem; width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 1rem; }
+    .scan-modal h3 { font-size: 1rem; font-weight: 700; color: #94a3b8; }
+    .scan-preview { width: 100%; max-height: 240px; object-fit: contain; border-radius: 0.5rem; border: 1px solid #334155; display: none; }
+    .scan-preview.show { display: block; }
+    .scan-status { font-size: 0.85rem; color: #64748b; min-height: 1.2em; }
+    .scan-status.ok  { color: #4ade80; }
+    .scan-status.err { color: #f87171; }
+    .scan-letters { background: #0f172a; border: 2px solid #334155; border-radius: 0.6rem; padding: 0.65rem 1rem; font-size: 1.3rem; font-weight: 700; letter-spacing: 0.2em; color: #f0f9ff; text-transform: uppercase; outline: none; width: 100%; transition: border-color 0.2s; }
+    .scan-letters:focus { border-color: #38bdf8; }
+    .scan-actions { display: flex; gap: 0.6rem; }
+    .scan-actions .btn { flex: 1; }
 
-    /* ── Footer ── */
     footer { margin-top: 2rem; color: #334155; font-size: 0.75rem; text-align: center; }
 
-    /* ── Responsive ── */
+    /* ═══ RESPONSIVE ═══ */
     @media (max-width: 500px) {
       body { padding: 1.25rem 0.75rem 2rem; }
       h1 { font-size: 1.5rem; }
       .subtitle { margin-bottom: 1rem; }
       .mode-tab { padding: 0.45rem 0.65rem; font-size: 0.78rem; }
       .card { padding: 1rem; }
-
-      /* Scramble */
       .input-row { flex-wrap: wrap; }
       .letter-input { order: 1; font-size: 1.2rem; padding: 0.65rem 0.75rem; }
       .btn-clear { order: 2; }
@@ -518,133 +234,9 @@
       .tile-qu { width: 3rem; font-size: 0.78rem; }
       .results-wrapper { margin-top: 1rem; }
       .word-chip { font-size: 0.9rem; padding: 0.35rem 0.65rem; }
-
-      /* Word Guess */
       .wg-cell { width: 2.6rem; height: 2.6rem; font-size: 1.1rem; }
-
-      /* Letter Blocks */
       .lb-tile { font-size: 0.95rem; }
     }
-
-    /* ── Scan modal ── */
-    .scan-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.75);
-      z-index: 100;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem;
-    }
-    .scan-overlay.open { display: flex; }
-
-    .scan-modal {
-      background: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 1rem;
-      padding: 1.5rem;
-      width: 100%;
-      max-width: 480px;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .scan-modal h3 { font-size: 1rem; font-weight: 700; color: #94a3b8; }
-
-    .scan-preview {
-      width: 100%;
-      max-height: 240px;
-      object-fit: contain;
-      border-radius: 0.5rem;
-      border: 1px solid #334155;
-      display: none;
-    }
-
-    .scan-preview.show { display: block; }
-
-    .scan-status { font-size: 0.85rem; color: #64748b; min-height: 1.2em; }
-    .scan-status.ok  { color: #4ade80; }
-    .scan-status.err { color: #f87171; }
-
-    .scan-letters {
-      background: #0f172a;
-      border: 2px solid #334155;
-      border-radius: 0.6rem;
-      padding: 0.65rem 1rem;
-      font-size: 1.3rem;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      color: #f0f9ff;
-      text-transform: uppercase;
-      outline: none;
-      width: 100%;
-      transition: border-color 0.2s;
-    }
-    .scan-letters:focus { border-color: #38bdf8; }
-
-    .scan-actions { display: flex; gap: 0.6rem; }
-    .scan-actions .btn { flex: 1; }
-
-    .btn-cam {
-      background: #334155;
-      color: #94a3b8;
-      border: none;
-      border-radius: 0.6rem;
-      padding: 0.65rem 0.9rem;
-      font-size: 1.1rem;
-      cursor: pointer;
-      transition: background 0.2s;
-      line-height: 1;
-    }
-    .btn-cam:hover { background: #475569; color: #e2e8f0; }
-
-    /* ── Hint / Suggest panels ── */
-    .wg-hint-panel {
-      background: #0f172a;
-      border: 1px solid #334155;
-      border-radius: 0.6rem;
-      padding: 0.75rem 1rem;
-      margin-top: 0.5rem;
-      display: none;
-      flex-direction: column;
-      gap: 0.3rem;
-      align-items: center;
-    }
-    .wg-hint-panel.show { display: flex; }
-    .wg-hint-count { font-size: 0.78rem; color: #64748b; }
-    .wg-hint-word  { font-size: 1.2rem; font-weight: 800; color: #38bdf8; letter-spacing: 0.15em; }
-
-    .lb-suggest-panel {
-      margin-top: 1rem;
-      display: none;
-    }
-    .lb-suggest-panel.show { display: block; }
-    .lb-suggest-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 0.5rem;
-    }
-    .lb-suggest-header span { font-size: 0.78rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
-    .lb-suggest-close { background: none; border: none; color: #475569; cursor: pointer; font-size: 1rem; padding: 0; }
-    .lb-suggest-close:hover { color: #94a3b8; }
-    .lb-suggest-groups { display: flex; flex-direction: column; gap: 0.4rem; max-height: 260px; overflow-y: auto; }
-    .lb-suggest-row { display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; }
-    .lb-suggest-len { font-size: 0.7rem; font-weight: 700; color: #818cf8; min-width: 1.8rem; }
-    .lb-suggest-chip {
-      background: #0f172a;
-      border: 1px solid #2d3f55;
-      border-radius: 0.3rem;
-      padding: 0.2rem 0.5rem;
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: #94a3b8;
-      cursor: pointer;
-      transition: border-color 0.1s, color 0.1s;
-    }
-    .lb-suggest-chip:hover { border-color: #38bdf8; color: #e2e8f0; }
   </style>
 </head>
 <body>
@@ -652,20 +244,17 @@
 <h1>SCRAMBLE</h1>
 <p class="subtitle">Bookworm Adventures word tools</p>
 
-<!-- Mode tabs -->
 <div class="mode-tabs">
   <button class="mode-tab active" data-mode="scramble">Scramble</button>
   <button class="mode-tab" data-mode="wordguess">Word Guess</button>
   <button class="mode-tab" data-mode="letterblocks">Letter Blocks</button>
 </div>
 
-<!-- Loading bar (shared) -->
-<div id="globalLoader" class="loader" style="margin-bottom:1rem;">
-  <div class="spinner"></div>
-  <span>Loading word list…</span>
+<div id="globalLoader" class="loader">
+  <div class="spinner"></div><span>Loading word list…</span>
 </div>
 
-<!-- ═══════════════════ SCRAMBLE MODE ═══════════════════ -->
+<!-- ═══ SCRAMBLE ═══ -->
 <div id="mode-scramble" class="mode-panel active">
   <div class="card">
     <div class="input-row">
@@ -677,11 +266,8 @@
     </div>
     <div class="char-tiles" id="tiles"></div>
     <div id="errorMsg" class="error-msg"></div>
-    <div class="status-bar">
-      <span id="statusText">Loading word list…</span>
-    </div>
+    <div class="status-bar"><span id="statusText">Loading word list…</span></div>
   </div>
-
   <div class="results-wrapper" id="resultsWrapper" style="display:none;">
     <div class="results-header">
       <h2>Found Words</h2>
@@ -692,24 +278,25 @@
   </div>
 </div>
 
-<!-- ═══════════════════ WORD GUESS MODE ═══════════════════ -->
+<!-- ═══ WORD GUESS SOLVER ═══ -->
 <div id="mode-wordguess" class="mode-panel">
   <div class="card">
+    <p class="wg-solver-desc">
+      Type a word you guessed, press <strong>Add</strong>, then
+      <strong>tap each letter</strong> to set the color feedback you got.
+      The app narrows down the answer as you go.
+    </p>
     <div class="wg-grid" id="wgGrid"></div>
     <div class="wg-message" id="wgMessage"></div>
     <div class="wg-input-row">
       <input id="wgInput" class="wg-input" type="text" maxlength="5"
-        placeholder="Guess…" autocomplete="off" autocorrect="off" spellcheck="false" />
-      <button class="btn" id="wgSubmit" disabled>Guess</button>
+        placeholder="Your guess…" autocomplete="off" autocorrect="off" spellcheck="false" />
+      <button class="btn" id="wgAddBtn" disabled>Add</button>
     </div>
     <div style="display:flex;gap:0.5rem;justify-content:center;">
-      <button class="btn btn-secondary" id="wgHintBtn" disabled>Hint</button>
-      <button class="btn btn-secondary" id="wgNew" disabled>New Word</button>
+      <button class="btn btn-secondary" id="wgReset" disabled>Reset</button>
     </div>
-    <div class="wg-hint-panel" id="wgHintPanel">
-      <div class="wg-hint-count" id="wgHintCount"></div>
-      <div class="wg-hint-word"  id="wgHintWord"></div>
-    </div>
+    <div class="wg-candidates" id="wgCandidates"></div>
     <div class="wg-legend">
       <div class="wg-legend-item"><div class="wg-legend-dot" style="background:#15803d"></div>Right spot</div>
       <div class="wg-legend-item"><div class="wg-legend-dot" style="background:#b45309"></div>Wrong spot</div>
@@ -718,7 +305,7 @@
   </div>
 </div>
 
-<!-- ═══════════════════ LETTER BLOCKS MODE ═══════════════════ -->
+<!-- ═══ LETTER BLOCKS ═══ -->
 <div id="mode-letterblocks" class="mode-panel">
   <div class="card">
     <div class="lb-header">
@@ -749,7 +336,7 @@
 
 <footer>Word list: Bookworm Adventures · Minimum word length: 2</footer>
 
-<!-- Hidden file inputs -->
+<!-- File inputs for camera -->
 <input type="file" id="scrCamInput" accept="image/*" capture="environment" style="display:none">
 <input type="file" id="lbCamInput"  accept="image/*" capture="environment" style="display:none">
 
@@ -759,27 +346,24 @@
     <h3 id="scanTitle">Scan Letters</h3>
     <img class="scan-preview" id="scanPreview" alt="preview" />
     <div class="scan-status" id="scanStatus">Choose an image to scan.</div>
-    <input class="scan-letters" id="scanLetters" type="text" placeholder="Detected letters will appear here…"
-      autocomplete="off" autocorrect="off" spellcheck="false" />
+    <input class="scan-letters" id="scanLetters" type="text"
+      placeholder="Detected letters…" autocomplete="off" autocorrect="off" spellcheck="false" />
     <div class="scan-actions">
       <button class="btn btn-secondary" id="scanCancel">Cancel</button>
-      <button class="btn" id="scanApply">Apply</button>
+      <button class="btn" id="scanApply" disabled>Apply</button>
     </div>
   </div>
 </div>
 
 <script>
-  // ═══════════════════════════════════════════════════════════
-  //  SHARED: word list + categories
-  // ═══════════════════════════════════════════════════════════
-  let wordList   = null;
-  let wordSet    = null;
+  // ═══ SHARED ═══════════════════════════════════════════════════
+  let wordList = null, wordSet = null;
 
   const CATEGORIES = {
-    'Metals':     { color: '#475569', text: '#e2e8f0', words: new Set(['gold','silver','iron','steel','copper','bronze','tin','lead','zinc','nickel','cobalt','chrome','brass','pewter','platinum','titanium','alloy','ore','rust','foil','nail','bolt','rivet','ingot','solder','mercury','barium','radium','iridium','osmium','bismuth','indium','gallium','cesium','hafnium','metal','metallic']) },
+    'Metals':     { color: '#475569', text: '#e2e8f0', words: new Set(['gold','silver','iron','steel','copper','bronze','tin','lead','zinc','nickel','cobalt','chrome','brass','pewter','platinum','titanium','alloy','ore','rust','foil','nail','bolt','rivet','ingot','solder','mercury','barium','radium','iridium','osmium','bismuth','indium','gallium','cesium','metal','metallic']) },
     'Gems':       { color: '#7e22ce', text: '#ede9fe', words: new Set(['ruby','diamond','emerald','sapphire','topaz','opal','pearl','garnet','amber','jade','crystal','gem','jewel','agate','onyx','beryl','amethyst','quartz','zircon','spinel','peridot','citrine','jasper','moonstone','aquamarine','gems','jewels','gemstone']) },
     'Feline':     { color: '#92400e', text: '#fef3c7', words: new Set(['cat','cats','kitten','kitty','tabby','calico','tom','tomcat','lion','tiger','leopard','panther','cheetah','jaguar','puma','cougar','lynx','bobcat','ocelot','serval','caracal','margay','oncilla','jaguarundi','manul','wildcat','liger','tigon','claw','claws','purr','mew','meow','feline','felid','feral']) },
-    'Animals':    { color: '#15803d', text: '#dcfce7', words: new Set(['dog','bird','fish','bear','wolf','eagle','snake','deer','fox','owl','crow','rat','bat','ant','bee','fly','bug','crab','frog','toad','duck','hen','cow','pig','ram','ewe','elk','ape','asp','eel','cod','colt','mare','boar','bull','stag','swan','hawk','wren','dove','mole','vole','newt','wasp','moth','lark','seal','worm','slug','clam','snail','hare','puma','bison','moose','raven','crane','finch','robin','quail','trout','perch','shark','whale','squid','beetle','spider','lizard','turtle','parrot','monkey','rabbit','donkey','horse','zebra','giraffe','dolphin','penguin','ostrich','peacock','vulture','sparrow','swallow','pigeon','falcon','cobra','viper','python','gecko','iguana','ferret','badger','otter','beaver','weasel','skunk','raccoon']) },
+    'Animals':    { color: '#15803d', text: '#dcfce7', words: new Set(['dog','bird','fish','bear','wolf','eagle','snake','deer','fox','owl','crow','rat','bat','ant','bee','fly','bug','crab','frog','toad','duck','hen','cow','pig','ram','ewe','elk','ape','asp','eel','cod','colt','mare','boar','bull','stag','swan','hawk','wren','dove','mole','vole','newt','wasp','moth','lark','seal','worm','slug','clam','snail','hare','bison','moose','raven','crane','finch','robin','quail','trout','perch','shark','whale','squid','beetle','spider','lizard','turtle','parrot','monkey','rabbit','donkey','horse','zebra','giraffe','dolphin','penguin','ostrich','peacock','vulture','sparrow','swallow','pigeon','falcon','cobra','viper','python','gecko','iguana','ferret','badger','otter','beaver','weasel','skunk','raccoon']) },
     'Colors':     { color: '#b45309', text: '#fef3c7', words: new Set(['red','blue','green','yellow','orange','purple','pink','black','white','gray','grey','brown','cyan','teal','violet','indigo','scarlet','crimson','azure','ivory','ebony','tan','rose','coral','mauve','beige','cream','navy','olive','tawny','auburn','ochre','sienna','umber','khaki','lilac','maroon','magenta','turquoise','lavender','vermilion','cerulean','fuchsia','chartreuse']) },
     'Weapons':    { color: '#b91c1c', text: '#fee2e2', words: new Set(['sword','blade','axe','bow','spear','lance','mace','dagger','knife','staff','club','dart','arrow','sling','whip','flail','pike','halberd','rapier','saber','scythe','trident','javelin','glaive','cleaver','cutlass','falchion','sickle','baton','cudgel','stiletto','dirk','machete','katana','shuriken','kunai','tomahawk','hatchet','warhammer','maul','cannon','pistol','musket','rifle','shield','buckler']) },
     'Food':       { color: '#c2410c', text: '#fff7ed', words: new Set(['bread','meat','cake','pie','rice','corn','bean','pea','nut','egg','milk','ale','wine','salt','herb','root','fruit','berry','plum','pear','lime','fig','date','oat','rye','tart','stew','soup','broth','cream','butter','honey','jam','ham','beef','pork','lamb','lard','flour','yeast','sugar','syrup','sauce','gravy','spice','pepper','ginger','garlic','onion','leek','carrot','celery','parsley','basil','thyme','sage','mint','dill','cumin','apple','grape','lemon','mango','peach','melon','cherry','prawn','shrimp','oyster','mussel','pasta','noodle','biscuit','cracker','candy','toffee','fudge','caramel','chocolate','vanilla','custard','pudding','jelly','yogurt','cheese','bacon','sausage']) },
@@ -789,9 +373,8 @@
   };
 
   const wordToCategory = {};
-  for (const [name, data] of Object.entries(CATEGORIES)) {
+  for (const [name, data] of Object.entries(CATEGORIES))
     for (const w of data.words) wordToCategory[w] = name;
-  }
 
   async function loadWordList() {
     try {
@@ -801,31 +384,20 @@
       wordList = text.split('\n').map(w => w.trim().toLowerCase()).filter(w => w.length >= 2);
       wordSet   = new Set(wordList);
       document.getElementById('globalLoader').style.display = 'none';
-      onWordListReady();
+      document.getElementById('statusText').textContent = `Ready — ${wordList.length.toLocaleString()} words loaded.`;
+      updateFindBtn();
+      document.getElementById('wgAddBtn').disabled  = false;
+      document.getElementById('wgReset').disabled   = false;
+      document.getElementById('lbNew').disabled     = false;
+      document.getElementById('lbSubmit').disabled  = false;
+      document.getElementById('lbSuggestBtn').disabled = false;
+      initLetterBlocks();
     } catch {
       document.getElementById('globalLoader').innerHTML = '<span style="color:#f87171">Failed to load word list. Refresh to retry.</span>';
     }
   }
 
-  function onWordListReady() {
-    // Scramble
-    document.getElementById('statusText').textContent = `Ready — ${wordList.length.toLocaleString()} words loaded.`;
-    updateFindBtn();
-    // Word Guess
-    document.getElementById('wgSubmit').disabled = false;
-    document.getElementById('wgNew').disabled = false;
-    document.getElementById('wgHintBtn').disabled = false;
-    initWordGuess();
-    // Letter Blocks
-    document.getElementById('lbNew').disabled = false;
-    document.getElementById('lbSubmit').disabled = false;
-    document.getElementById('lbSuggestBtn').disabled = false;
-    initLetterBlocks();
-  }
-
-  // ═══════════════════════════════════════════════════════════
-  //  MODE SWITCHING
-  // ═══════════════════════════════════════════════════════════
+  // ═══ MODE SWITCHING ═══════════════════════════════════════════
   document.querySelectorAll('.mode-tab').forEach(tab => {
     tab.addEventListener('click', () => {
       document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
@@ -835,40 +407,27 @@
     });
   });
 
-  // ═══════════════════════════════════════════════════════════
-  //  SCRAMBLE MODE
-  // ═══════════════════════════════════════════════════════════
-  const scrInput    = document.getElementById('letterInput');
-  const findBtn     = document.getElementById('findBtn');
-  const clearBtn    = document.getElementById('clearBtn');
-  const tilesEl     = document.getElementById('tiles');
-  const statusText  = document.getElementById('statusText');
-  const errorMsg    = document.getElementById('errorMsg');
+  // ═══ SCRAMBLE ════════════════════════════════════════════════
+  const scrInput   = document.getElementById('letterInput');
+  const findBtn    = document.getElementById('findBtn');
+  const clearBtn   = document.getElementById('clearBtn');
+  const tilesEl    = document.getElementById('tiles');
+  const statusText = document.getElementById('statusText');
+  const errorMsg   = document.getElementById('errorMsg');
   const resultsWrapper   = document.getElementById('resultsWrapper');
   const resultsContainer = document.getElementById('resultsContainer');
-  const totalBadge  = document.getElementById('totalBadge');
-  const filterBar   = document.getElementById('filterBar');
-
-  let lastWords    = [];
-  let activeFilter = 'All';
+  const totalBadge = document.getElementById('totalBadge');
+  const filterBar  = document.getElementById('filterBar');
+  let lastWords = [], activeFilter = 'All';
 
   scrInput.addEventListener('input', () => {
-    const val = scrInput.value.replace(/[^a-zA-Z]/g, '').slice(0, 16);
-    scrInput.value = val;
-    renderTiles(val);
-    updateFindBtn();
-    errorMsg.textContent = '';
+    const val = scrInput.value.replace(/[^a-zA-Z]/g,'').slice(0,16);
+    scrInput.value = val; renderTiles(val); updateFindBtn(); errorMsg.textContent = '';
   });
-
-  scrInput.addEventListener('keydown', e => { if (e.key === 'Enter' && !findBtn.disabled) findBtn.click(); });
-
+  scrInput.addEventListener('keydown', e => { if (e.key==='Enter' && !findBtn.disabled) findBtn.click(); });
   clearBtn.addEventListener('click', () => {
-    scrInput.value = '';
-    renderTiles('');
-    errorMsg.textContent = '';
-    resultsWrapper.style.display = 'none';
-    activeFilter = 'All';
-    updateFindBtn();
+    scrInput.value=''; renderTiles(''); errorMsg.textContent='';
+    resultsWrapper.style.display='none'; activeFilter='All'; updateFindBtn();
     statusText.textContent = wordList ? `Ready — ${wordList.length.toLocaleString()} words loaded.` : 'Loading…';
     scrInput.focus();
   });
@@ -877,21 +436,18 @@
     tilesEl.innerHTML = '';
     for (const ch of str.toUpperCase()) {
       const t = document.createElement('div');
-      t.className = 'tile' + (ch === 'Q' ? ' tile-qu' : '');
-      t.textContent = ch === 'Q' ? 'QU' : ch;
+      t.className = 'tile' + (ch==='Q' ? ' tile-qu' : '');
+      t.textContent = ch==='Q' ? 'QU' : ch;
       tilesEl.appendChild(t);
     }
   }
+  function updateFindBtn() { findBtn.disabled = !wordList || scrInput.value.trim().length < 1; }
 
-  function updateFindBtn() {
-    findBtn.disabled = !wordList || scrInput.value.trim().length < 1;
-  }
-
-  function canForm(word, letterCounts) {
+  function canForm(word, counts) {
     const need = {};
     for (const ch of word) {
-      need[ch] = (need[ch] || 0) + 1;
-      if (need[ch] > (letterCounts[ch] || 0)) return false;
+      need[ch] = (need[ch]||0)+1;
+      if (need[ch] > (counts[ch]||0)) return false;
     }
     return true;
   }
@@ -899,14 +455,11 @@
   function findWords(letters) {
     const lc = letters.toLowerCase();
     const counts = {};
-    for (const ch of lc) {
-      counts[ch] = (counts[ch] || 0) + 1;
-      if (ch === 'q') counts['u'] = (counts['u'] || 0) + 1;
-    }
-    const maxLen = lc.length + (counts['q'] || 0);
+    for (const ch of lc) { counts[ch]=(counts[ch]||0)+1; if(ch==='q') counts['u']=(counts['u']||0)+1; }
+    const maxLen = lc.length + (counts['q']||0);
     const results = [];
     for (const word of wordList) {
-      if (word.length < 2 || word.length > maxLen) continue;
+      if (word.length<2 || word.length>maxLen) continue;
       if (canForm(word, counts)) results.push(word);
     }
     return results;
@@ -915,624 +468,364 @@
   function renderFilterBar(words) {
     filterBar.innerHTML = '';
     const present = new Set(words.map(w => wordToCategory[w]).filter(Boolean));
-    if (present.size === 0) return;
+    if (!present.size) return;
     const cats = ['All', ...Object.keys(CATEGORIES).filter(c => present.has(c))];
     for (const cat of cats) {
       const btn = document.createElement('button');
-      btn.className = 'filter-btn' + (cat === activeFilter ? ' active' : '');
+      btn.className = 'filter-btn' + (cat===activeFilter ? ' active' : '');
       btn.textContent = cat;
-      if (cat === 'All' && activeFilter === 'All') {
-        btn.style.background = 'linear-gradient(135deg,#38bdf8,#818cf8)';
-        btn.style.color = '#0f172a';
-      } else if (cat !== 'All' && activeFilter === cat) {
-        btn.style.background = CATEGORIES[cat].color;
-      }
-      btn.addEventListener('click', () => { activeFilter = cat; renderFilterBar(lastWords); renderWordGroups(lastWords); });
+      if (cat==='All' && activeFilter==='All') { btn.style.background='linear-gradient(135deg,#38bdf8,#818cf8)'; btn.style.color='#0f172a'; }
+      else if (cat!=='All' && activeFilter===cat) { btn.style.background=CATEGORIES[cat].color; }
+      btn.addEventListener('click', () => { activeFilter=cat; renderFilterBar(lastWords); renderWordGroups(lastWords); });
       filterBar.appendChild(btn);
     }
   }
 
   function renderWordGroups(words) {
     resultsContainer.innerHTML = '';
-    const filtered = activeFilter === 'All' ? words : words.filter(w => wordToCategory[w] === activeFilter);
-    if (filtered.length === 0) {
-      resultsContainer.innerHTML = '<div class="empty-state">No words in this category.</div>';
-      return;
-    }
+    const filtered = activeFilter==='All' ? words : words.filter(w => wordToCategory[w]===activeFilter);
+    if (!filtered.length) { resultsContainer.innerHTML='<div class="empty-state">No words in this category.</div>'; return; }
     const groups = {};
-    for (const w of filtered) (groups[w.length] = groups[w.length] || []).push(w);
-    for (const len of Object.keys(groups).map(Number).sort((a,b) => b-a)) {
+    for (const w of filtered) (groups[w.length]=groups[w.length]||[]).push(w);
+    for (const len of Object.keys(groups).map(Number).sort((a,b)=>b-a)) {
       const group = groups[len].sort();
-      const div = document.createElement('div');
-      div.className = 'length-group';
-      const header = document.createElement('div');
-      header.className = 'length-header';
-      header.innerHTML = `<span class="length-label">${len}-letter words</span><div style="display:flex;align-items:center;gap:.75rem"><span class="length-count">${group.length} word${group.length!==1?'s':''}</span><span class="chevron">▼</span></div>`;
+      const div = document.createElement('div'); div.className='length-group';
+      const header = document.createElement('div'); header.className='length-header';
+      header.innerHTML=`<span class="length-label">${len}-letter words</span><div style="display:flex;align-items:center;gap:.75rem"><span class="length-count">${group.length} word${group.length!==1?'s':''}</span><span class="chevron">▼</span></div>`;
       header.addEventListener('click', () => div.classList.toggle('collapsed'));
-      const grid = document.createElement('div');
-      grid.className = 'word-grid';
+      const grid = document.createElement('div'); grid.className='word-grid';
       for (const w of group) {
-        const chip = document.createElement('div');
-        chip.className = 'word-chip';
-        chip.textContent = w;
-        const cat = wordToCategory[w];
-        if (cat) {
-          const tag = document.createElement('span');
-          tag.className = 'cat-tag';
-          tag.textContent = cat;
-          tag.style.background = CATEGORIES[cat].color;
-          tag.style.color = CATEGORIES[cat].text;
-          chip.appendChild(tag);
-        }
+        const chip = document.createElement('div'); chip.className='word-chip'; chip.textContent=w;
+        const cat=wordToCategory[w];
+        if (cat) { const tag=document.createElement('span'); tag.className='cat-tag'; tag.textContent=cat; tag.style.background=CATEGORIES[cat].color; tag.style.color=CATEGORIES[cat].text; chip.appendChild(tag); }
         grid.appendChild(chip);
       }
-      div.appendChild(header);
-      div.appendChild(grid);
-      resultsContainer.appendChild(div);
+      div.appendChild(header); div.appendChild(grid); resultsContainer.appendChild(div);
     }
   }
 
   function renderResults(words) {
-    lastWords = words;
-    activeFilter = 'All';
-    if (words.length === 0) {
-      resultsWrapper.style.display = 'block';
-      filterBar.innerHTML = '';
-      totalBadge.textContent = '0 words';
-      resultsContainer.innerHTML = '<div class="empty-state">No valid words found.<br>Try different letters.</div>';
-      return;
+    lastWords=words; activeFilter='All';
+    if (!words.length) {
+      resultsWrapper.style.display='block'; filterBar.innerHTML=''; totalBadge.textContent='0 words';
+      resultsContainer.innerHTML='<div class="empty-state">No valid words found.<br>Try different letters.</div>'; return;
     }
-    totalBadge.textContent = `${words.length.toLocaleString()} word${words.length!==1?'s':''}`;
-    resultsWrapper.style.display = 'block';
-    renderFilterBar(words);
-    renderWordGroups(words);
+    totalBadge.textContent=`${words.length.toLocaleString()} word${words.length!==1?'s':''}`;
+    resultsWrapper.style.display='block'; renderFilterBar(words); renderWordGroups(words);
   }
 
   findBtn.addEventListener('click', () => {
     const letters = scrInput.value.trim();
-    if (!letters || !wordList) return;
-    if (!/^[a-zA-Z]+$/.test(letters)) { errorMsg.textContent = 'Only letters A–Z are allowed.'; return; }
-    findBtn.disabled = true;
-    findBtn.textContent = 'Searching…';
-    statusText.textContent = '';
-    resultsWrapper.style.display = 'none';
+    if (!letters||!wordList) return;
+    if (!/^[a-zA-Z]+$/.test(letters)) { errorMsg.textContent='Only letters A–Z are allowed.'; return; }
+    findBtn.disabled=true; findBtn.textContent='Searching…'; statusText.textContent=''; resultsWrapper.style.display='none';
     setTimeout(() => {
-      const t0 = performance.now();
-      const words = findWords(letters);
-      const ms = (performance.now() - t0).toFixed(0);
+      const t0=performance.now(), words=findWords(letters), ms=(performance.now()-t0).toFixed(0);
       renderResults(words);
-      statusText.innerHTML = words.length > 0
-        ? `Found <span class="highlight">${words.length.toLocaleString()} words</span> in ${ms}ms.`
-        : `No words found in ${ms}ms.`;
-      findBtn.textContent = 'Find Words';
-      updateFindBtn();
+      statusText.innerHTML = words.length>0 ? `Found <span class="highlight">${words.length.toLocaleString()} words</span> in ${ms}ms.` : `No words found in ${ms}ms.`;
+      findBtn.textContent='Find Words'; updateFindBtn();
     }, 30);
   });
 
-  // ═══════════════════════════════════════════════════════════
-  //  WORD GUESS MODE (Wordle)
-  // ═══════════════════════════════════════════════════════════
-  const WG_ROWS = 6;
-  const WG_COLS = 5;
-  let wgAnswer   = '';
-  let wgGuesses  = [];
-  let wgDone     = false;
-  let wgCurrentRow = 0;
+  // ═══ WORD GUESS SOLVER ════════════════════════════════════════
+  const wgGrid      = document.getElementById('wgGrid');
+  const wgInput     = document.getElementById('wgInput');
+  const wgAddBtn    = document.getElementById('wgAddBtn');
+  const wgReset     = document.getElementById('wgReset');
+  const wgMessage   = document.getElementById('wgMessage');
+  const wgCandPanel = document.getElementById('wgCandidates');
 
-  const wgGrid    = document.getElementById('wgGrid');
-  const wgInput   = document.getElementById('wgInput');
-  const wgSubmit  = document.getElementById('wgSubmit');
-  const wgNew     = document.getElementById('wgNew');
-  const wgMessage = document.getElementById('wgMessage');
+  let solverGuesses = [];
 
-  function initWordGuess() {
-    const five = wordList.filter(w => w.length === 5);
-    wgAnswer  = five[Math.floor(Math.random() * five.length)];
-    wgGuesses = [];
-    wgDone    = false;
-    wgCurrentRow = 0;
-    wgMessage.textContent = '';
-    wgMessage.className   = 'wg-message';
-    wgInput.value = '';
-    wgInput.disabled = false;
-    buildWGGrid();
+  function initSolver() {
+    solverGuesses=[]; wgGrid.innerHTML=''; wgInput.value='';
+    wgMessage.textContent=''; wgCandPanel.innerHTML='';
   }
 
-  function buildWGGrid() {
-    wgGrid.innerHTML = '';
-    for (let r = 0; r < WG_ROWS; r++) {
-      const row = document.createElement('div');
-      row.className = 'wg-row';
-      row.id = `wg-row-${r}`;
-      for (let c = 0; c < WG_COLS; c++) {
+  function addSolverGuess() {
+    const word = wgInput.value.toLowerCase().replace(/[^a-z]/g,'');
+    if (word.length!==5) {
+      wgInput.style.animation='none'; void wgInput.offsetWidth; wgInput.style.animation='shake 0.4s ease';
+      wgMessage.textContent='Enter exactly 5 letters.'; return;
+    }
+    if (solverGuesses.length>=6) return;
+    wgMessage.textContent='';
+    solverGuesses.push({ word, states: Array(5).fill('absent') });
+    wgInput.value='';
+    renderSolverGrid();
+    updateSolverCandidates();
+  }
+
+  function renderSolverGrid() {
+    wgGrid.innerHTML='';
+    for (const [ri, g] of solverGuesses.entries()) {
+      const row = document.createElement('div'); row.className='wg-row';
+      for (let ci=0; ci<5; ci++) {
         const cell = document.createElement('div');
-        cell.className = 'wg-cell';
-        cell.id = `wg-${r}-${c}`;
+        cell.className=`wg-cell ${g.states[ci]}`;
+        cell.textContent=g.word[ci].toUpperCase();
+        const r=ri, c=ci;
+        cell.addEventListener('click', () => {
+          const cycle=['absent','present','correct'];
+          g.states[c]=cycle[(cycle.indexOf(g.states[c])+1)%3];
+          cell.className=`wg-cell ${g.states[c]}`;
+          updateSolverCandidates();
+        });
         row.appendChild(cell);
       }
       wgGrid.appendChild(row);
     }
   }
 
-  function getLetterStates(guess, answer) {
-    const states = Array(WG_COLS).fill('absent');
-    const pool   = {};
-    for (let i = 0; i < WG_COLS; i++) {
-      if (guess[i] === answer[i]) states[i] = 'correct';
-      else pool[answer[i]] = (pool[answer[i]] || 0) + 1;
-    }
-    for (let i = 0; i < WG_COLS; i++) {
-      if (states[i] !== 'correct' && pool[guess[i]] > 0) {
-        states[i] = 'present';
-        pool[guess[i]]--;
+  function getSolverCandidates() {
+    const mustBeAt={}, mustContain={}, minCount={}, maxCount={};
+    for (const {word,states} of solverGuesses) {
+      const seen={};
+      for (let i=0; i<5; i++) {
+        const ch=word[i]; seen[ch]=(seen[ch]||0)+1;
+        if (states[i]==='correct') { mustBeAt[i]=ch; minCount[ch]=Math.max(minCount[ch]||0,seen[ch]); }
+        else if (states[i]==='present') { if(!mustContain[ch])mustContain[ch]=new Set(); mustContain[ch].add(i); minCount[ch]=Math.max(minCount[ch]||0,seen[ch]); }
+        else { const cap=seen[ch]-1; if(maxCount[ch]===undefined||cap<maxCount[ch])maxCount[ch]=cap; }
       }
     }
-    return states;
-  }
-
-  function revealRow(row, guess, states) {
-    for (let c = 0; c < WG_COLS; c++) {
-      const cell = document.getElementById(`wg-${row}-${c}`);
-      setTimeout(() => {
-        cell.textContent = guess[c].toUpperCase();
-        cell.className = `wg-cell ${states[c]}`;
-      }, c * 120);
-    }
-  }
-
-  wgInput.addEventListener('input', () => {
-    wgInput.value = wgInput.value.replace(/[^a-zA-Z]/g,'').slice(0, WG_COLS).toUpperCase();
-    // Live-preview current row
-    for (let c = 0; c < WG_COLS; c++) {
-      const cell = document.getElementById(`wg-${wgCurrentRow}-${c}`);
-      if (!cell) continue;
-      cell.textContent = wgInput.value[c] || '';
-      cell.className = 'wg-cell' + (wgInput.value[c] ? ' filled' : '');
-    }
-  });
-
-  wgInput.addEventListener('keydown', e => { if (e.key === 'Enter' && !wgSubmit.disabled) wgSubmit.click(); });
-
-  function submitWGGuess() {
-    if (wgDone) return;
-    const guess = wgInput.value.toLowerCase();
-    if (guess.length !== WG_COLS) { shakeRow(wgCurrentRow); return; }
-    if (!wordSet.has(guess)) {
-      wgMessage.textContent = 'Not a valid word';
-      wgMessage.className = 'wg-message info';
-      shakeRow(wgCurrentRow);
-      return;
-    }
-    wgMessage.textContent = '';
-    const states = getLetterStates(guess, wgAnswer);
-    revealRow(wgCurrentRow, guess, states);
-    wgGuesses.push(guess);
-    wgCurrentRow++;
-    wgInput.value = '';
-
-    setTimeout(() => {
-      if (guess === wgAnswer) {
-        wgDone = true;
-        wgMessage.textContent = ['Genius!','Excellent!','Great!','Good!','Nice!','Phew!'][wgCurrentRow - 1] || 'Got it!';
-        wgMessage.className = 'wg-message win';
-        wgInput.disabled = true;
-      } else if (wgCurrentRow >= WG_ROWS) {
-        wgDone = true;
-        wgMessage.textContent = `The word was: ${wgAnswer.toUpperCase()}`;
-        wgMessage.className = 'wg-message lose';
-        wgInput.disabled = true;
-      }
-    }, WG_COLS * 120 + 100);
-  }
-
-  function shakeRow(row) {
-    const el = document.getElementById(`wg-row-${row}`);
-    el.classList.remove('shake');
-    void el.offsetWidth;
-    el.classList.add('shake');
-  }
-
-  wgSubmit.addEventListener('click', submitWGGuess);
-  wgNew.addEventListener('click', initWordGuess);
-
-  // ── Word Guess solver ────────────────────────────────────────
-  const wgHintBtn   = document.getElementById('wgHintBtn');
-  const wgHintPanel = document.getElementById('wgHintPanel');
-  const wgHintCount = document.getElementById('wgHintCount');
-  const wgHintWord  = document.getElementById('wgHintWord');
-
-  function getWGCandidates() {
-    const mustBeAt    = {};      // pos -> letter
-    const mustContain = {};      // letter -> Set<pos> where it must NOT be
-    const minCount    = {};      // letter -> minimum occurrences
-    const maxCount    = {};      // letter -> maximum occurrences
-
-    for (const guess of wgGuesses) {
-      const states = getLetterStates(guess, wgAnswer);
-      const seen = {};
-      for (let i = 0; i < WG_COLS; i++) {
-        const ch = guess[i];
-        seen[ch] = (seen[ch] || 0) + 1;
-        if (states[i] === 'correct') {
-          mustBeAt[i] = ch;
-          minCount[ch] = Math.max(minCount[ch] || 0, seen[ch]);
-        } else if (states[i] === 'present') {
-          if (!mustContain[ch]) mustContain[ch] = new Set();
-          mustContain[ch].add(i);
-          minCount[ch] = Math.max(minCount[ch] || 0, seen[ch]);
-        } else {
-          maxCount[ch] = seen[ch] - 1;
-        }
-      }
-    }
-
     return wordList.filter(w => {
-      if (w.length !== 5) return false;
-      if (wgGuesses.includes(w)) return false;
-      for (const [pos, ch] of Object.entries(mustBeAt)) if (w[pos] !== ch) return false;
-      for (const [ch, notPos] of Object.entries(mustContain)) {
-        if (!w.includes(ch)) return false;
-        for (const p of notPos) if (w[p] === ch) return false;
-      }
-      for (const [ch, min] of Object.entries(minCount)) {
-        if (w.split('').filter(c => c === ch).length < min) return false;
-      }
-      for (const [ch, max] of Object.entries(maxCount)) {
-        if (w.split('').filter(c => c === ch).length > max) return false;
-      }
+      if (w.length!==5) return false;
+      for (const [pos,ch] of Object.entries(mustBeAt)) if(w[pos]!==ch) return false;
+      for (const [ch,notPos] of Object.entries(mustContain)) { if(!w.includes(ch))return false; for(const p of notPos)if(w[p]===ch)return false; }
+      for (const [ch,min] of Object.entries(minCount)) if(w.split('').filter(c=>c===ch).length<min)return false;
+      for (const [ch,max] of Object.entries(maxCount)) if(w.split('').filter(c=>c===ch).length>max)return false;
       return true;
     });
   }
 
-  function showWGHint() {
-    const candidates = getWGCandidates();
-    if (candidates.length === 0) {
-      wgHintCount.textContent = 'No candidates found.';
-      wgHintWord.textContent  = '';
-    } else {
-      // Pick a candidate that maximises coverage of unseen letters
-      const seenLetters = new Set(wgGuesses.join(''));
-      const pick = candidates.find(w => w.split('').some(c => !seenLetters.has(c))) || candidates[0];
-      wgHintCount.textContent = `${candidates.length} possible word${candidates.length !== 1 ? 's' : ''} remaining`;
-      wgHintWord.textContent  = pick.toUpperCase();
+  function updateSolverCandidates() {
+    wgCandPanel.innerHTML='';
+    if (!solverGuesses.length) return;
+    const candidates=getSolverCandidates();
+    if (!candidates.length) { wgCandPanel.innerHTML='<div class="wg-cand-header" style="color:#f87171">No matches — check your colors.</div>'; return; }
+
+    const seenLetters=new Set(solverGuesses.flatMap(g=>g.word.split('')));
+    const best=candidates.find(w=>w.split('').some(c=>!seenLetters.has(c)))||candidates[0];
+    const shown=candidates.slice(0,30);
+
+    const header=document.createElement('div'); header.className='wg-cand-header';
+    header.textContent=`${candidates.length} possible word${candidates.length!==1?'s':''}`;
+    wgCandPanel.appendChild(header);
+
+    const bestEl=document.createElement('div'); bestEl.className='wg-cand-best';
+    bestEl.textContent=candidates.length<=3 ? candidates.map(w=>w.toUpperCase()).join('  ·  ') : `Try: ${best.toUpperCase()}`;
+    wgCandPanel.appendChild(bestEl);
+
+    const list=document.createElement('div'); list.className='wg-cand-list';
+    for (const w of shown) {
+      const chip=document.createElement('span'); chip.className='wg-cand-chip'; chip.textContent=w;
+      chip.addEventListener('click', () => { wgInput.value=w.toUpperCase(); wgInput.focus(); });
+      list.appendChild(chip);
     }
-    wgHintPanel.classList.add('show');
+    if (candidates.length>shown.length) {
+      const more=document.createElement('span'); more.style.cssText='font-size:0.72rem;color:#475569;align-self:center;padding:0.2rem;';
+      more.textContent=`+${candidates.length-shown.length} more`; list.appendChild(more);
+    }
+    wgCandPanel.appendChild(list);
   }
 
-  wgHintBtn.addEventListener('click', showWGHint);
+  wgInput.addEventListener('input', () => { wgInput.value=wgInput.value.replace(/[^a-zA-Z]/g,'').slice(0,5).toUpperCase(); });
+  wgInput.addEventListener('keydown', e => { if(e.key==='Enter') addSolverGuess(); });
+  wgAddBtn.addEventListener('click', addSolverGuess);
+  wgReset.addEventListener('click', initSolver);
 
-  // Enable hint button once word list is ready (patched into onWordListReady)
-  const _origOnReady = onWordListReady;
-  // (hint btn enabled inside onWordListReady below via wgNew.disabled = false)
-
-  // ═══════════════════════════════════════════════════════════
-  //  LETTER BLOCKS MODE
-  // ═══════════════════════════════════════════════════════════
+  // ═══ LETTER BLOCKS ════════════════════════════════════════════
   const LETTER_POOL = 'aaaaaaaaabbccddddeeeeeeeeeeeeffggghhiiiiiiiiijkllllmmnnnnnnooooooooppqrrrrrrssssttttttuuuuvvwwxyyz'.split('');
 
-  let lbTiles      = [];  // [{letter, used}]
-  let lbFoundWords = new Set();
-  let lbScore      = 0;
+  let lbTiles=[], lbFoundWords=new Set(), lbScore=0;
 
-  const lbTilesEl  = document.getElementById('lbTiles');
-  const lbInput    = document.getElementById('lbInput');
-  const lbSubmitEl = document.getElementById('lbSubmit');
-  const lbNewEl    = document.getElementById('lbNew');
-  const lbMessageEl= document.getElementById('lbMessage');
-  const lbFoundEl  = document.getElementById('lbFound');
-  const lbScoreEl  = document.getElementById('lbScore');
+  const lbTilesEl   = document.getElementById('lbTiles');
+  const lbInput     = document.getElementById('lbInput');
+  const lbSubmitEl  = document.getElementById('lbSubmit');
+  const lbNewEl     = document.getElementById('lbNew');
+  const lbMessageEl = document.getElementById('lbMessage');
+  const lbFoundEl   = document.getElementById('lbFound');
+  const lbScoreEl   = document.getElementById('lbScore');
 
   function generateLBTiles() {
-    const pool = [...LETTER_POOL];
-    // Shuffle pool
-    for (let i = pool.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [pool[i], pool[j]] = [pool[j], pool[i]];
-    }
-    let tiles = pool.slice(0, 25).map(l => ({ letter: l, used: false }));
-    // Ensure at least 7 vowels
-    const vowels = 'aeiou';
-    let vCount = tiles.filter(t => vowels.includes(t.letter)).length;
-    while (vCount < 7) {
-      const idx = tiles.findIndex(t => !vowels.includes(t.letter));
-      if (idx === -1) break;
-      const v = vowels[Math.floor(Math.random() * 5)];
-      tiles[idx] = { letter: v, used: false };
+    const pool=[...LETTER_POOL];
+    for (let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
+    let tiles=pool.slice(0,25).map(l=>({letter:l,used:false}));
+    const vowels='aeiou';
+    let vCount=tiles.filter(t=>vowels.includes(t.letter)).length;
+    while (vCount<7) {
+      const idx=tiles.findIndex(t=>!vowels.includes(t.letter));
+      if(idx===-1)break;
+      tiles[idx]={letter:vowels[Math.floor(Math.random()*5)],used:false};
       vCount++;
     }
     return tiles;
   }
 
   function initLetterBlocks() {
-    lbTiles      = generateLBTiles();
-    lbFoundWords = new Set();
-    lbScore      = 0;
-    lbInput.value   = '';
-    lbInput.disabled = false;
-    lbMessageEl.textContent = '';
-    lbMessageEl.className   = 'lb-message';
-    lbFoundEl.innerHTML     = '';
-    lbScoreEl.innerHTML     = '0 <span>pts</span>';
+    lbTiles=generateLBTiles(); lbFoundWords=new Set(); lbScore=0;
+    lbInput.value=''; lbMessageEl.textContent=''; lbMessageEl.className='lb-message';
+    lbFoundEl.innerHTML=''; lbScoreEl.innerHTML='0 <span>pts</span>';
+    document.getElementById('lbSuggestPanel').classList.remove('show');
     renderLBTiles();
   }
 
   function renderLBTiles() {
-    lbTilesEl.innerHTML = '';
+    lbTilesEl.innerHTML='';
     for (const t of lbTiles) {
-      const div = document.createElement('div');
-      const isQU = t.letter === 'q';
-      div.className = 'lb-tile' + (t.used ? ' used' : '') + (isQU ? ' qu' : '');
-      div.textContent = isQU ? 'QU' : t.letter.toUpperCase();
+      const div=document.createElement('div');
+      const isQU=t.letter==='q';
+      div.className='lb-tile'+(t.used?' used':'')+(isQU?' qu':'');
+      div.textContent=isQU?'QU':t.letter.toUpperCase();
       lbTilesEl.appendChild(div);
     }
   }
 
   function lbCanForm(word) {
-    const avail = {};
+    const avail={};
     for (const t of lbTiles) {
-      if (!t.used) {
-        avail[t.letter] = (avail[t.letter] || 0) + 1;
-        if (t.letter === 'q') avail['u'] = (avail['u'] || 0) + 1;
-      }
+      if(!t.used){avail[t.letter]=(avail[t.letter]||0)+1; if(t.letter==='q')avail['u']=(avail['u']||0)+1;}
     }
-    for (const ch of word) {
-      if (!avail[ch]) return false;
-      avail[ch]--;
-    }
+    for (const ch of word) { if(!avail[ch])return false; avail[ch]--; }
     return true;
   }
 
   function lbUseTiles(word) {
-    const letters = word.split('');
-    for (const ch of letters) {
-      // For 'u' that came from 'q', mark the q tile used first
-      if (ch === 'u') {
-        const qIdx = lbTiles.findIndex(t => !t.used && t.letter === 'q');
-        if (qIdx !== -1) {
-          lbTiles[qIdx].used = true;
-          continue;
-        }
-      }
-      const idx = lbTiles.findIndex(t => !t.used && t.letter === ch);
-      if (idx !== -1) lbTiles[idx].used = true;
+    for (const ch of word) {
+      if (ch==='u') { const qi=lbTiles.findIndex(t=>!t.used&&t.letter==='q'); if(qi!==-1){lbTiles[qi].used=true;continue;} }
+      const idx=lbTiles.findIndex(t=>!t.used&&t.letter===ch);
+      if(idx!==-1)lbTiles[idx].used=true;
     }
   }
 
   function submitLBWord() {
-    const word = lbInput.value.toLowerCase().trim();
-    lbInput.value = '';
-    if (word.length < 2) return;
-    if (lbFoundWords.has(word)) {
-      lbMessageEl.textContent = `Already found "${word}"`;
-      lbMessageEl.className = 'lb-message bad';
-      return;
-    }
-    if (!wordSet.has(word)) {
-      lbMessageEl.textContent = `"${word.toUpperCase()}" is not a valid word`;
-      lbMessageEl.className = 'lb-message bad';
-      return;
-    }
-    if (!lbCanForm(word)) {
-      lbMessageEl.textContent = `Can't spell "${word.toUpperCase()}" with available tiles`;
-      lbMessageEl.className = 'lb-message bad';
-      return;
-    }
-
-    lbUseTiles(word);
-    lbFoundWords.add(word);
-    const pts = word.length;
-    lbScore += pts;
-
-    lbScoreEl.innerHTML = `${lbScore} <span>pts</span>`;
-    lbMessageEl.textContent = `+${pts} pts — ${word.toUpperCase()}`;
-    lbMessageEl.className = 'lb-message good';
-
-    // Add chip to found words
-    const chip = document.createElement('div');
-    chip.className = 'lb-word-chip';
-    chip.innerHTML = `${word} <span class="lb-pts">+${pts}</span>`;
-    lbFoundEl.prepend(chip);
-
+    const word=lbInput.value.toLowerCase().trim(); lbInput.value='';
+    if (word.length<2) return;
+    if (lbFoundWords.has(word)) { lbMessageEl.textContent=`Already found "${word}"`; lbMessageEl.className='lb-message bad'; return; }
+    if (!wordSet.has(word)) { lbMessageEl.textContent=`"${word.toUpperCase()}" is not a valid word`; lbMessageEl.className='lb-message bad'; return; }
+    if (!lbCanForm(word)) { lbMessageEl.textContent=`Can't spell "${word.toUpperCase()}" with available tiles`; lbMessageEl.className='lb-message bad'; return; }
+    lbUseTiles(word); lbFoundWords.add(word);
+    const pts=word.length; lbScore+=pts;
+    lbScoreEl.innerHTML=`${lbScore} <span>pts</span>`;
+    lbMessageEl.textContent=`+${pts} pts — ${word.toUpperCase()}`; lbMessageEl.className='lb-message good';
+    const chip=document.createElement('div'); chip.className='lb-word-chip';
+    chip.innerHTML=`${word} <span class="lb-pts">+${pts}</span>`; lbFoundEl.prepend(chip);
     renderLBTiles();
+    document.getElementById('lbSuggestPanel').classList.remove('show');
   }
 
-  lbInput.addEventListener('input', () => {
-    lbInput.value = lbInput.value.replace(/[^a-zA-Z]/g,'').toUpperCase();
-  });
-  lbInput.addEventListener('keydown', e => { if (e.key === 'Enter') submitLBWord(); });
+  lbInput.addEventListener('input', () => { lbInput.value=lbInput.value.replace(/[^a-zA-Z]/g,'').toUpperCase(); });
+  lbInput.addEventListener('keydown', e => { if(e.key==='Enter')submitLBWord(); });
   lbSubmitEl.addEventListener('click', submitLBWord);
   lbNewEl.addEventListener('click', initLetterBlocks);
 
-  // ── Letter Blocks suggest ────────────────────────────────────
-  const lbSuggestBtn    = document.getElementById('lbSuggestBtn');
-  const lbSuggestPanel  = document.getElementById('lbSuggestPanel');
-  const lbSuggestCount  = document.getElementById('lbSuggestCount');
-  const lbSuggestGroups = document.getElementById('lbSuggestGroups');
-  const lbSuggestClose  = document.getElementById('lbSuggestClose');
+  // ─ Letter Blocks suggest ─
+  const lbSuggestBtn   = document.getElementById('lbSuggestBtn');
+  const lbSuggestPanel = document.getElementById('lbSuggestPanel');
+  const lbSuggestCount = document.getElementById('lbSuggestCount');
+  const lbSuggestGroups= document.getElementById('lbSuggestGroups');
+  document.getElementById('lbSuggestClose').addEventListener('click', () => lbSuggestPanel.classList.remove('show'));
 
-  function showLBSuggestions() {
-    const words = [];
+  lbSuggestBtn.addEventListener('click', () => {
+    const words=[];
     for (const word of wordList) {
-      if (word.length < 2) continue;
-      if (lbFoundWords.has(word)) continue;
+      if (word.length<2||lbFoundWords.has(word)) continue;
       if (lbCanForm(word)) words.push(word);
     }
-    words.sort((a, b) => b.length - a.length || a.localeCompare(b));
-
-    lbSuggestGroups.innerHTML = '';
-    if (words.length === 0) {
-      lbSuggestCount.textContent = 'No words possible with remaining tiles';
-      lbSuggestPanel.classList.add('show');
-      return;
-    }
-
-    lbSuggestCount.textContent = `${words.length} possible word${words.length !== 1 ? 's' : ''}`;
-
-    // Group by length, show top 8 lengths max
-    const groups = {};
-    for (const w of words) (groups[w.length] = groups[w.length] || []).push(w);
-    const lengths = Object.keys(groups).map(Number).sort((a, b) => b - a).slice(0, 8);
-
+    words.sort((a,b)=>b.length-a.length||a.localeCompare(b));
+    lbSuggestGroups.innerHTML='';
+    if (!words.length) { lbSuggestCount.textContent='No words possible with remaining tiles'; lbSuggestPanel.classList.add('show'); return; }
+    lbSuggestCount.textContent=`${words.length} possible word${words.length!==1?'s':''}`;
+    const groups={};
+    for (const w of words) (groups[w.length]=groups[w.length]||[]).push(w);
+    const lengths=Object.keys(groups).map(Number).sort((a,b)=>b-a).slice(0,8);
     for (const len of lengths) {
-      const row = document.createElement('div');
-      row.className = 'lb-suggest-row';
-      const lenLabel = document.createElement('span');
-      lenLabel.className = 'lb-suggest-len';
-      lenLabel.textContent = len;
-      row.appendChild(lenLabel);
-      // Show up to 12 words per length
-      for (const w of groups[len].slice(0, 12)) {
-        const chip = document.createElement('span');
-        chip.className = 'lb-suggest-chip';
-        chip.textContent = w;
-        chip.addEventListener('click', () => {
-          lbInput.value = w.toUpperCase();
-          lbInput.focus();
-          lbSuggestPanel.classList.remove('show');
-        });
+      const row=document.createElement('div'); row.className='lb-suggest-row';
+      const lenLabel=document.createElement('span'); lenLabel.className='lb-suggest-len'; lenLabel.textContent=len; row.appendChild(lenLabel);
+      for (const w of groups[len].slice(0,12)) {
+        const chip=document.createElement('span'); chip.className='lb-suggest-chip'; chip.textContent=w;
+        chip.addEventListener('click', () => { lbInput.value=w.toUpperCase(); lbInput.focus(); lbSuggestPanel.classList.remove('show'); });
         row.appendChild(chip);
       }
-      if (groups[len].length > 12) {
-        const more = document.createElement('span');
-        more.style.cssText = 'font-size:0.72rem;color:#475569;';
-        more.textContent = `+${groups[len].length - 12} more`;
-        row.appendChild(more);
-      }
+      if (groups[len].length>12) { const more=document.createElement('span'); more.style.cssText='font-size:.72rem;color:#475569;'; more.textContent=`+${groups[len].length-12} more`; row.appendChild(more); }
       lbSuggestGroups.appendChild(row);
     }
-
     lbSuggestPanel.classList.add('show');
-  }
+  });
 
-  lbSuggestBtn.addEventListener('click', showLBSuggestions);
-  lbSuggestClose.addEventListener('click', () => lbSuggestPanel.classList.remove('show'));
-
-  // ── Init ──────────────────────────────────────────────────
-  loadWordList();
-
-  // ═══════════════════════════════════════════════════════════
-  //  SCAN / OCR
-  // ═══════════════════════════════════════════════════════════
-  const scanOverlay  = document.getElementById('scanOverlay');
-  const scanTitle    = document.getElementById('scanTitle');
-  const scanPreview  = document.getElementById('scanPreview');
-  const scanStatus   = document.getElementById('scanStatus');
-  const scanLetters  = document.getElementById('scanLetters');
-  const scanCancel   = document.getElementById('scanCancel');
-  const scanApply    = document.getElementById('scanApply');
-  const scrCamInput  = document.getElementById('scrCamInput');
-  const lbCamInput   = document.getElementById('lbCamInput');
-
-  let scanTarget = 'scramble'; // 'scramble' | 'letterblocks'
-  let tesseractWorker = null;
+  // ═══ SCAN / OCR ═══════════════════════════════════════════════
+  const scanOverlay = document.getElementById('scanOverlay');
+  const scanTitle   = document.getElementById('scanTitle');
+  const scanPreview = document.getElementById('scanPreview');
+  const scanStatus  = document.getElementById('scanStatus');
+  const scanLetters = document.getElementById('scanLetters');
+  const scanCancel  = document.getElementById('scanCancel');
+  const scanApply   = document.getElementById('scanApply');
+  const scrCamInput = document.getElementById('scrCamInput');
+  const lbCamInput  = document.getElementById('lbCamInput');
+  let scanTarget='scramble', tesseractWorker=null;
 
   async function getTesseract() {
     if (tesseractWorker) return tesseractWorker;
-    scanStatus.textContent = 'Loading OCR engine…';
-    tesseractWorker = await Tesseract.createWorker('eng');
-    await tesseractWorker.setParameters({
-      tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
-      tessedit_pageseg_mode: '11',
-    });
+    scanStatus.textContent='Loading OCR engine…';
+    tesseractWorker=await Tesseract.createWorker('eng');
+    await tesseractWorker.setParameters({ tessedit_char_whitelist:'ABCDEFGHIJKLMNOPQRSTUVWXYZ', tessedit_pageseg_mode:'11' });
     return tesseractWorker;
   }
 
   function openScanModal(target) {
-    scanTarget = target;
-    scanTitle.textContent = target === 'scramble' ? 'Scan Letters (up to 16)' : 'Scan Tiles (25)';
-    scanPreview.classList.remove('show');
-    scanPreview.src = '';
-    scanLetters.value = '';
-    scanStatus.textContent = 'Choose an image to scan.';
-    scanStatus.className = 'scan-status';
-    scanApply.disabled = true;
-    scanOverlay.classList.add('open');
-    // Open file picker immediately
-    if (target === 'scramble') scrCamInput.click();
-    else lbCamInput.click();
+    scanTarget=target;
+    scanTitle.textContent=target==='scramble'?'Scan Letters (up to 16)':'Scan Tiles (25)';
+    scanPreview.classList.remove('show'); scanPreview.src='';
+    scanLetters.value=''; scanStatus.textContent='Choose an image to scan.'; scanStatus.className='scan-status';
+    scanApply.disabled=true; scanOverlay.classList.add('open');
+    if (target==='scramble') scrCamInput.click(); else lbCamInput.click();
   }
 
   async function runOCR(file) {
-    const url = URL.createObjectURL(file);
-    scanPreview.src = url;
-    scanPreview.classList.add('show');
-    scanStatus.textContent = 'Running OCR…';
-    scanStatus.className = 'scan-status';
-    scanApply.disabled = true;
-
+    const url=URL.createObjectURL(file);
+    scanPreview.src=url; scanPreview.classList.add('show');
+    scanStatus.textContent='Running OCR…'; scanStatus.className='scan-status'; scanApply.disabled=true;
     try {
-      const worker = await getTesseract();
-      const { data: { text } } = await worker.recognize(file);
+      const worker=await getTesseract();
+      const {data:{text}}=await worker.recognize(file);
       URL.revokeObjectURL(url);
-
-      const letters = text.replace(/[^A-Za-z]/g, '').toUpperCase();
-      const limit   = scanTarget === 'scramble' ? 16 : 25;
-      const result  = letters.slice(0, limit);
-
-      if (result.length === 0) {
-        scanStatus.textContent = 'No letters detected — try a clearer photo.';
-        scanStatus.className = 'scan-status err';
-        return;
-      }
-
-      scanLetters.value = result;
-      scanStatus.textContent = `Detected ${result.length} letter${result.length !== 1 ? 's' : ''}. Edit if needed, then Apply.`;
-      scanStatus.className = 'scan-status ok';
-      scanApply.disabled = false;
-    } catch (e) {
-      scanStatus.textContent = 'OCR failed. Try a clearer photo.';
-      scanStatus.className = 'scan-status err';
-    }
+      const letters=text.replace(/[^A-Za-z]/g,'').toUpperCase().slice(0, scanTarget==='scramble'?16:25);
+      if (!letters.length) { scanStatus.textContent='No letters detected — try a clearer photo.'; scanStatus.className='scan-status err'; return; }
+      scanLetters.value=letters;
+      scanStatus.textContent=`Detected ${letters.length} letter${letters.length!==1?'s':''}. Edit if needed, then Apply.`; scanStatus.className='scan-status ok';
+      scanApply.disabled=false;
+    } catch { scanStatus.textContent='OCR failed. Try a clearer photo.'; scanStatus.className='scan-status err'; }
   }
 
   function applyScan() {
-    const letters = scanLetters.value.replace(/[^A-Za-z]/g, '').toUpperCase();
+    const letters=scanLetters.value.replace(/[^A-Za-z]/g,'').toUpperCase();
     if (!letters) return;
-
-    if (scanTarget === 'scramble') {
-      scrInput.value = letters.slice(0, 16);
-      scrInput.dispatchEvent(new Event('input'));
+    if (scanTarget==='scramble') {
+      scrInput.value=letters.slice(0,16); scrInput.dispatchEvent(new Event('input'));
     } else {
-      // Build Letter Blocks tiles from scanned letters, pad/trim to 25
-      let arr = letters.split('').slice(0, 25);
-      while (arr.length < 25) {
-        const fill = LETTER_POOL[Math.floor(Math.random() * LETTER_POOL.length)];
-        arr.push(fill.toUpperCase());
-      }
-      lbTiles = arr.map(l => ({ letter: l.toLowerCase(), used: false }));
-      lbFoundWords = new Set();
-      lbScore = 0;
-      lbInput.value = '';
-      lbMessageEl.textContent = '';
-      lbFoundEl.innerHTML = '';
-      lbScoreEl.innerHTML = '0 <span>pts</span>';
-      renderLBTiles();
+      let arr=letters.split('').slice(0,25);
+      while(arr.length<25) arr.push(LETTER_POOL[Math.floor(Math.random()*LETTER_POOL.length)].toUpperCase());
+      lbTiles=arr.map(l=>({letter:l.toLowerCase(),used:false}));
+      lbFoundWords=new Set(); lbScore=0; lbInput.value=''; lbMessageEl.textContent='';
+      lbFoundEl.innerHTML=''; lbScoreEl.innerHTML='0 <span>pts</span>'; renderLBTiles();
     }
-
-    closeScanModal();
-    scrCamInput.value = '';
-    lbCamInput.value  = '';
+    closeScanModal(); scrCamInput.value=''; lbCamInput.value='';
   }
 
-  function closeScanModal() {
-    scanOverlay.classList.remove('open');
-  }
+  function closeScanModal() { scanOverlay.classList.remove('open'); }
 
-  // Wire up file inputs
-  scrCamInput.addEventListener('change', e => { if (e.target.files[0]) runOCR(e.target.files[0]); });
-  lbCamInput.addEventListener('change',  e => { if (e.target.files[0]) runOCR(e.target.files[0]); });
-
-  // Wire up buttons
+  scrCamInput.addEventListener('change', e => { if(e.target.files[0])runOCR(e.target.files[0]); });
+  lbCamInput.addEventListener('change',  e => { if(e.target.files[0])runOCR(e.target.files[0]); });
   document.getElementById('scrScan').addEventListener('click', () => openScanModal('scramble'));
   document.getElementById('lbScan').addEventListener('click',  () => openScanModal('letterblocks'));
   scanCancel.addEventListener('click', closeScanModal);
   scanApply.addEventListener('click',  applyScan);
-  scanLetters.addEventListener('input', () => {
-    scanLetters.value = scanLetters.value.replace(/[^A-Za-z]/g, '').toUpperCase();
-    scanApply.disabled = scanLetters.value.length === 0;
-  });
-  // Close on backdrop click
-  scanOverlay.addEventListener('click', e => { if (e.target === scanOverlay) closeScanModal(); });
+  scanLetters.addEventListener('input', () => { scanLetters.value=scanLetters.value.replace(/[^A-Za-z]/g,'').toUpperCase(); scanApply.disabled=!scanLetters.value.length; });
+  scanOverlay.addEventListener('click', e => { if(e.target===scanOverlay)closeScanModal(); });
+
+  // ═══ INIT ══════════════════════════════════════════════════════
+  loadWordList();
 </script>
 </body>
 </html>
