@@ -599,6 +599,52 @@
       line-height: 1;
     }
     .btn-cam:hover { background: #475569; color: #e2e8f0; }
+
+    /* ── Hint / Suggest panels ── */
+    .wg-hint-panel {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 0.6rem;
+      padding: 0.75rem 1rem;
+      margin-top: 0.5rem;
+      display: none;
+      flex-direction: column;
+      gap: 0.3rem;
+      align-items: center;
+    }
+    .wg-hint-panel.show { display: flex; }
+    .wg-hint-count { font-size: 0.78rem; color: #64748b; }
+    .wg-hint-word  { font-size: 1.2rem; font-weight: 800; color: #38bdf8; letter-spacing: 0.15em; }
+
+    .lb-suggest-panel {
+      margin-top: 1rem;
+      display: none;
+    }
+    .lb-suggest-panel.show { display: block; }
+    .lb-suggest-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+    .lb-suggest-header span { font-size: 0.78rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+    .lb-suggest-close { background: none; border: none; color: #475569; cursor: pointer; font-size: 1rem; padding: 0; }
+    .lb-suggest-close:hover { color: #94a3b8; }
+    .lb-suggest-groups { display: flex; flex-direction: column; gap: 0.4rem; max-height: 260px; overflow-y: auto; }
+    .lb-suggest-row { display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; }
+    .lb-suggest-len { font-size: 0.7rem; font-weight: 700; color: #818cf8; min-width: 1.8rem; }
+    .lb-suggest-chip {
+      background: #0f172a;
+      border: 1px solid #2d3f55;
+      border-radius: 0.3rem;
+      padding: 0.2rem 0.5rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #94a3b8;
+      cursor: pointer;
+      transition: border-color 0.1s, color 0.1s;
+    }
+    .lb-suggest-chip:hover { border-color: #38bdf8; color: #e2e8f0; }
   </style>
 </head>
 <body>
@@ -657,7 +703,12 @@
       <button class="btn" id="wgSubmit" disabled>Guess</button>
     </div>
     <div style="display:flex;gap:0.5rem;justify-content:center;">
+      <button class="btn btn-secondary" id="wgHintBtn" disabled>Hint</button>
       <button class="btn btn-secondary" id="wgNew" disabled>New Word</button>
+    </div>
+    <div class="wg-hint-panel" id="wgHintPanel">
+      <div class="wg-hint-count" id="wgHintCount"></div>
+      <div class="wg-hint-word"  id="wgHintWord"></div>
     </div>
     <div class="wg-legend">
       <div class="wg-legend-item"><div class="wg-legend-dot" style="background:#15803d"></div>Right spot</div>
@@ -682,8 +733,16 @@
       <input id="lbInput" class="lb-input" type="text"
         placeholder="Spell a word…" autocomplete="off" autocorrect="off" spellcheck="false" />
       <button class="btn" id="lbSubmit" disabled>Spell</button>
+      <button class="btn btn-secondary" id="lbSuggestBtn" disabled title="Show possible words">💡</button>
     </div>
     <div class="lb-message" id="lbMessage"></div>
+    <div class="lb-suggest-panel" id="lbSuggestPanel">
+      <div class="lb-suggest-header">
+        <span id="lbSuggestCount"></span>
+        <button class="lb-suggest-close" id="lbSuggestClose">✕</button>
+      </div>
+      <div class="lb-suggest-groups" id="lbSuggestGroups"></div>
+    </div>
     <div class="lb-found" id="lbFound"></div>
   </div>
 </div>
@@ -755,10 +814,12 @@
     // Word Guess
     document.getElementById('wgSubmit').disabled = false;
     document.getElementById('wgNew').disabled = false;
+    document.getElementById('wgHintBtn').disabled = false;
     initWordGuess();
     // Letter Blocks
     document.getElementById('lbNew').disabled = false;
     document.getElementById('lbSubmit').disabled = false;
+    document.getElementById('lbSuggestBtn').disabled = false;
     initLetterBlocks();
   }
 
@@ -1074,6 +1135,76 @@
   wgSubmit.addEventListener('click', submitWGGuess);
   wgNew.addEventListener('click', initWordGuess);
 
+  // ── Word Guess solver ────────────────────────────────────────
+  const wgHintBtn   = document.getElementById('wgHintBtn');
+  const wgHintPanel = document.getElementById('wgHintPanel');
+  const wgHintCount = document.getElementById('wgHintCount');
+  const wgHintWord  = document.getElementById('wgHintWord');
+
+  function getWGCandidates() {
+    const mustBeAt    = {};      // pos -> letter
+    const mustContain = {};      // letter -> Set<pos> where it must NOT be
+    const minCount    = {};      // letter -> minimum occurrences
+    const maxCount    = {};      // letter -> maximum occurrences
+
+    for (const guess of wgGuesses) {
+      const states = getLetterStates(guess, wgAnswer);
+      const seen = {};
+      for (let i = 0; i < WG_COLS; i++) {
+        const ch = guess[i];
+        seen[ch] = (seen[ch] || 0) + 1;
+        if (states[i] === 'correct') {
+          mustBeAt[i] = ch;
+          minCount[ch] = Math.max(minCount[ch] || 0, seen[ch]);
+        } else if (states[i] === 'present') {
+          if (!mustContain[ch]) mustContain[ch] = new Set();
+          mustContain[ch].add(i);
+          minCount[ch] = Math.max(minCount[ch] || 0, seen[ch]);
+        } else {
+          maxCount[ch] = seen[ch] - 1;
+        }
+      }
+    }
+
+    return wordList.filter(w => {
+      if (w.length !== 5) return false;
+      if (wgGuesses.includes(w)) return false;
+      for (const [pos, ch] of Object.entries(mustBeAt)) if (w[pos] !== ch) return false;
+      for (const [ch, notPos] of Object.entries(mustContain)) {
+        if (!w.includes(ch)) return false;
+        for (const p of notPos) if (w[p] === ch) return false;
+      }
+      for (const [ch, min] of Object.entries(minCount)) {
+        if (w.split('').filter(c => c === ch).length < min) return false;
+      }
+      for (const [ch, max] of Object.entries(maxCount)) {
+        if (w.split('').filter(c => c === ch).length > max) return false;
+      }
+      return true;
+    });
+  }
+
+  function showWGHint() {
+    const candidates = getWGCandidates();
+    if (candidates.length === 0) {
+      wgHintCount.textContent = 'No candidates found.';
+      wgHintWord.textContent  = '';
+    } else {
+      // Pick a candidate that maximises coverage of unseen letters
+      const seenLetters = new Set(wgGuesses.join(''));
+      const pick = candidates.find(w => w.split('').some(c => !seenLetters.has(c))) || candidates[0];
+      wgHintCount.textContent = `${candidates.length} possible word${candidates.length !== 1 ? 's' : ''} remaining`;
+      wgHintWord.textContent  = pick.toUpperCase();
+    }
+    wgHintPanel.classList.add('show');
+  }
+
+  wgHintBtn.addEventListener('click', showWGHint);
+
+  // Enable hint button once word list is ready (patched into onWordListReady)
+  const _origOnReady = onWordListReady;
+  // (hint btn enabled inside onWordListReady below via wgNew.disabled = false)
+
   // ═══════════════════════════════════════════════════════════
   //  LETTER BLOCKS MODE
   // ═══════════════════════════════════════════════════════════
@@ -1211,6 +1342,70 @@
   lbInput.addEventListener('keydown', e => { if (e.key === 'Enter') submitLBWord(); });
   lbSubmitEl.addEventListener('click', submitLBWord);
   lbNewEl.addEventListener('click', initLetterBlocks);
+
+  // ── Letter Blocks suggest ────────────────────────────────────
+  const lbSuggestBtn    = document.getElementById('lbSuggestBtn');
+  const lbSuggestPanel  = document.getElementById('lbSuggestPanel');
+  const lbSuggestCount  = document.getElementById('lbSuggestCount');
+  const lbSuggestGroups = document.getElementById('lbSuggestGroups');
+  const lbSuggestClose  = document.getElementById('lbSuggestClose');
+
+  function showLBSuggestions() {
+    const words = [];
+    for (const word of wordList) {
+      if (word.length < 2) continue;
+      if (lbFoundWords.has(word)) continue;
+      if (lbCanForm(word)) words.push(word);
+    }
+    words.sort((a, b) => b.length - a.length || a.localeCompare(b));
+
+    lbSuggestGroups.innerHTML = '';
+    if (words.length === 0) {
+      lbSuggestCount.textContent = 'No words possible with remaining tiles';
+      lbSuggestPanel.classList.add('show');
+      return;
+    }
+
+    lbSuggestCount.textContent = `${words.length} possible word${words.length !== 1 ? 's' : ''}`;
+
+    // Group by length, show top 8 lengths max
+    const groups = {};
+    for (const w of words) (groups[w.length] = groups[w.length] || []).push(w);
+    const lengths = Object.keys(groups).map(Number).sort((a, b) => b - a).slice(0, 8);
+
+    for (const len of lengths) {
+      const row = document.createElement('div');
+      row.className = 'lb-suggest-row';
+      const lenLabel = document.createElement('span');
+      lenLabel.className = 'lb-suggest-len';
+      lenLabel.textContent = len;
+      row.appendChild(lenLabel);
+      // Show up to 12 words per length
+      for (const w of groups[len].slice(0, 12)) {
+        const chip = document.createElement('span');
+        chip.className = 'lb-suggest-chip';
+        chip.textContent = w;
+        chip.addEventListener('click', () => {
+          lbInput.value = w.toUpperCase();
+          lbInput.focus();
+          lbSuggestPanel.classList.remove('show');
+        });
+        row.appendChild(chip);
+      }
+      if (groups[len].length > 12) {
+        const more = document.createElement('span');
+        more.style.cssText = 'font-size:0.72rem;color:#475569;';
+        more.textContent = `+${groups[len].length - 12} more`;
+        row.appendChild(more);
+      }
+      lbSuggestGroups.appendChild(row);
+    }
+
+    lbSuggestPanel.classList.add('show');
+  }
+
+  lbSuggestBtn.addEventListener('click', showLBSuggestions);
+  lbSuggestClose.addEventListener('click', () => lbSuggestPanel.classList.remove('show'));
 
   // ── Init ──────────────────────────────────────────────────
   loadWordList();
