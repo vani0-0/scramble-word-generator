@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Scramble Word Generator</title>
+  <script src="https://unpkg.com/tesseract.js@5/dist/tesseract.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -524,6 +525,80 @@
       /* Letter Blocks */
       .lb-tile { font-size: 0.95rem; }
     }
+
+    /* ── Scan modal ── */
+    .scan-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .scan-overlay.open { display: flex; }
+
+    .scan-modal {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .scan-modal h3 { font-size: 1rem; font-weight: 700; color: #94a3b8; }
+
+    .scan-preview {
+      width: 100%;
+      max-height: 240px;
+      object-fit: contain;
+      border-radius: 0.5rem;
+      border: 1px solid #334155;
+      display: none;
+    }
+
+    .scan-preview.show { display: block; }
+
+    .scan-status { font-size: 0.85rem; color: #64748b; min-height: 1.2em; }
+    .scan-status.ok  { color: #4ade80; }
+    .scan-status.err { color: #f87171; }
+
+    .scan-letters {
+      background: #0f172a;
+      border: 2px solid #334155;
+      border-radius: 0.6rem;
+      padding: 0.65rem 1rem;
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      color: #f0f9ff;
+      text-transform: uppercase;
+      outline: none;
+      width: 100%;
+      transition: border-color 0.2s;
+    }
+    .scan-letters:focus { border-color: #38bdf8; }
+
+    .scan-actions { display: flex; gap: 0.6rem; }
+    .scan-actions .btn { flex: 1; }
+
+    .btn-cam {
+      background: #334155;
+      color: #94a3b8;
+      border: none;
+      border-radius: 0.6rem;
+      padding: 0.65rem 0.9rem;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+      line-height: 1;
+    }
+    .btn-cam:hover { background: #475569; color: #e2e8f0; }
   </style>
 </head>
 <body>
@@ -552,6 +627,7 @@
         placeholder="Enter up to 16 letters…" autocomplete="off" autocorrect="off" spellcheck="false" />
       <button class="btn" id="findBtn" disabled>Find Words</button>
       <button class="btn btn-clear" id="clearBtn" title="Clear">✕</button>
+      <button class="btn-cam" id="scrScan" title="Scan letters">📷</button>
     </div>
     <div class="char-tiles" id="tiles"></div>
     <div id="errorMsg" class="error-msg"></div>
@@ -596,7 +672,10 @@
   <div class="card">
     <div class="lb-header">
       <div class="lb-score" id="lbScore">0 <span>pts</span></div>
-      <button class="btn btn-secondary" id="lbNew" disabled>New Tiles</button>
+      <div style="display:flex;gap:0.5rem;">
+        <button class="btn-cam" id="lbScan" title="Scan tiles">📷</button>
+        <button class="btn btn-secondary" id="lbNew" disabled>New Tiles</button>
+      </div>
     </div>
     <div class="lb-tiles" id="lbTiles"></div>
     <div class="lb-input-row">
@@ -610,6 +689,25 @@
 </div>
 
 <footer>Word list: Bookworm Adventures · Minimum word length: 2</footer>
+
+<!-- Hidden file inputs -->
+<input type="file" id="scrCamInput" accept="image/*" capture="environment" style="display:none">
+<input type="file" id="lbCamInput"  accept="image/*" capture="environment" style="display:none">
+
+<!-- Scan modal -->
+<div class="scan-overlay" id="scanOverlay">
+  <div class="scan-modal">
+    <h3 id="scanTitle">Scan Letters</h3>
+    <img class="scan-preview" id="scanPreview" alt="preview" />
+    <div class="scan-status" id="scanStatus">Choose an image to scan.</div>
+    <input class="scan-letters" id="scanLetters" type="text" placeholder="Detected letters will appear here…"
+      autocomplete="off" autocorrect="off" spellcheck="false" />
+    <div class="scan-actions">
+      <button class="btn btn-secondary" id="scanCancel">Cancel</button>
+      <button class="btn" id="scanApply">Apply</button>
+    </div>
+  </div>
+</div>
 
 <script>
   // ═══════════════════════════════════════════════════════════
@@ -1116,6 +1214,130 @@
 
   // ── Init ──────────────────────────────────────────────────
   loadWordList();
+
+  // ═══════════════════════════════════════════════════════════
+  //  SCAN / OCR
+  // ═══════════════════════════════════════════════════════════
+  const scanOverlay  = document.getElementById('scanOverlay');
+  const scanTitle    = document.getElementById('scanTitle');
+  const scanPreview  = document.getElementById('scanPreview');
+  const scanStatus   = document.getElementById('scanStatus');
+  const scanLetters  = document.getElementById('scanLetters');
+  const scanCancel   = document.getElementById('scanCancel');
+  const scanApply    = document.getElementById('scanApply');
+  const scrCamInput  = document.getElementById('scrCamInput');
+  const lbCamInput   = document.getElementById('lbCamInput');
+
+  let scanTarget = 'scramble'; // 'scramble' | 'letterblocks'
+  let tesseractWorker = null;
+
+  async function getTesseract() {
+    if (tesseractWorker) return tesseractWorker;
+    scanStatus.textContent = 'Loading OCR engine…';
+    tesseractWorker = await Tesseract.createWorker('eng');
+    await tesseractWorker.setParameters({
+      tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+      tessedit_pageseg_mode: '11',
+    });
+    return tesseractWorker;
+  }
+
+  function openScanModal(target) {
+    scanTarget = target;
+    scanTitle.textContent = target === 'scramble' ? 'Scan Letters (up to 16)' : 'Scan Tiles (25)';
+    scanPreview.classList.remove('show');
+    scanPreview.src = '';
+    scanLetters.value = '';
+    scanStatus.textContent = 'Choose an image to scan.';
+    scanStatus.className = 'scan-status';
+    scanApply.disabled = true;
+    scanOverlay.classList.add('open');
+    // Open file picker immediately
+    if (target === 'scramble') scrCamInput.click();
+    else lbCamInput.click();
+  }
+
+  async function runOCR(file) {
+    const url = URL.createObjectURL(file);
+    scanPreview.src = url;
+    scanPreview.classList.add('show');
+    scanStatus.textContent = 'Running OCR…';
+    scanStatus.className = 'scan-status';
+    scanApply.disabled = true;
+
+    try {
+      const worker = await getTesseract();
+      const { data: { text } } = await worker.recognize(file);
+      URL.revokeObjectURL(url);
+
+      const letters = text.replace(/[^A-Za-z]/g, '').toUpperCase();
+      const limit   = scanTarget === 'scramble' ? 16 : 25;
+      const result  = letters.slice(0, limit);
+
+      if (result.length === 0) {
+        scanStatus.textContent = 'No letters detected — try a clearer photo.';
+        scanStatus.className = 'scan-status err';
+        return;
+      }
+
+      scanLetters.value = result;
+      scanStatus.textContent = `Detected ${result.length} letter${result.length !== 1 ? 's' : ''}. Edit if needed, then Apply.`;
+      scanStatus.className = 'scan-status ok';
+      scanApply.disabled = false;
+    } catch (e) {
+      scanStatus.textContent = 'OCR failed. Try a clearer photo.';
+      scanStatus.className = 'scan-status err';
+    }
+  }
+
+  function applyScan() {
+    const letters = scanLetters.value.replace(/[^A-Za-z]/g, '').toUpperCase();
+    if (!letters) return;
+
+    if (scanTarget === 'scramble') {
+      scrInput.value = letters.slice(0, 16);
+      scrInput.dispatchEvent(new Event('input'));
+    } else {
+      // Build Letter Blocks tiles from scanned letters, pad/trim to 25
+      let arr = letters.split('').slice(0, 25);
+      while (arr.length < 25) {
+        const fill = LETTER_POOL[Math.floor(Math.random() * LETTER_POOL.length)];
+        arr.push(fill.toUpperCase());
+      }
+      lbTiles = arr.map(l => ({ letter: l.toLowerCase(), used: false }));
+      lbFoundWords = new Set();
+      lbScore = 0;
+      lbInput.value = '';
+      lbMessageEl.textContent = '';
+      lbFoundEl.innerHTML = '';
+      lbScoreEl.innerHTML = '0 <span>pts</span>';
+      renderLBTiles();
+    }
+
+    closeScanModal();
+    scrCamInput.value = '';
+    lbCamInput.value  = '';
+  }
+
+  function closeScanModal() {
+    scanOverlay.classList.remove('open');
+  }
+
+  // Wire up file inputs
+  scrCamInput.addEventListener('change', e => { if (e.target.files[0]) runOCR(e.target.files[0]); });
+  lbCamInput.addEventListener('change',  e => { if (e.target.files[0]) runOCR(e.target.files[0]); });
+
+  // Wire up buttons
+  document.getElementById('scrScan').addEventListener('click', () => openScanModal('scramble'));
+  document.getElementById('lbScan').addEventListener('click',  () => openScanModal('letterblocks'));
+  scanCancel.addEventListener('click', closeScanModal);
+  scanApply.addEventListener('click',  applyScan);
+  scanLetters.addEventListener('input', () => {
+    scanLetters.value = scanLetters.value.replace(/[^A-Za-z]/g, '').toUpperCase();
+    scanApply.disabled = scanLetters.value.length === 0;
+  });
+  // Close on backdrop click
+  scanOverlay.addEventListener('click', e => { if (e.target === scanOverlay) closeScanModal(); });
 </script>
 </body>
 </html>
