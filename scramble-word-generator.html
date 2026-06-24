@@ -121,6 +121,8 @@
       animation: pop 0.15s ease;
     }
 
+    .tile-qu { width: 3.6rem; font-size: 0.95rem; }
+
     @keyframes pop {
       from { transform: scale(0.7); opacity: 0; }
       to   { transform: scale(1);   opacity: 1; }
@@ -583,8 +585,8 @@
     tilesEl.innerHTML = '';
     for (const ch of str.toUpperCase()) {
       const t = document.createElement('div');
-      t.className = 'tile';
-      t.textContent = ch;
+      t.className = 'tile' + (ch === 'Q' ? ' tile-qu' : '');
+      t.textContent = ch === 'Q' ? 'QU' : ch;
       tilesEl.appendChild(t);
     }
   }
@@ -606,8 +608,12 @@
   function findWords(letters) {
     const lc = letters.toLowerCase();
     const counts = {};
-    for (const ch of lc) counts[ch] = (counts[ch] || 0) + 1;
-    const maxLen = lc.length;
+    for (const ch of lc) {
+      counts[ch] = (counts[ch] || 0) + 1;
+      if (ch === 'q') counts['u'] = (counts['u'] || 0) + 1; // Q acts as QU
+    }
+    const qCount = counts['q'] || 0;
+    const maxLen = lc.length + qCount; // each Q adds a free U
     const results = [];
     for (const word of wordList) {
       if (word.length < 2 || word.length > maxLen) continue;
