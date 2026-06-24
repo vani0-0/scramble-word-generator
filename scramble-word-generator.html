@@ -272,6 +272,44 @@
       margin-top: 2rem;
       color: #334155;
       font-size: 0.75rem;
+      text-align: center;
+    }
+
+    @media (max-width: 500px) {
+      body { padding: 1.25rem 0.75rem; }
+
+      h1 { font-size: 1.5rem; }
+
+      .subtitle { margin-bottom: 1.25rem; }
+
+      .card { padding: 1rem; }
+
+      .input-row { flex-wrap: wrap; }
+
+      .letter-input {
+        order: 1;
+        font-size: 1.2rem;
+        padding: 0.65rem 0.75rem;
+      }
+
+      .btn-clear { order: 2; }
+
+      #findBtn {
+        order: 3;
+        width: 100%;
+        padding: 0.8rem;
+        font-size: 1rem;
+      }
+
+      .tile {
+        width: 2rem;
+        height: 2rem;
+        font-size: 0.95rem;
+      }
+
+      .word-chip { font-size: 0.9rem; padding: 0.35rem 0.65rem; }
+
+      .results-wrapper { margin-top: 1rem; }
     }
   </style>
 </head>
@@ -317,7 +355,7 @@
   <div id="resultsContainer"></div>
 </div>
 
-<footer>Word list: ~370k English words · Minimum word length: 2</footer>
+<footer>Word list: Bookworm Adventures · Minimum word length: 2</footer>
 
 <script>
   const input    = document.getElementById('letterInput');
