@@ -65,9 +65,7 @@
       transition: border-color 0.2s;
     }
 
-    .letter-input:focus {
-      border-color: #38bdf8;
-    }
+    .letter-input:focus { border-color: #38bdf8; }
 
     .letter-input::placeholder {
       color: #334155;
@@ -119,7 +117,6 @@
       font-weight: 800;
       font-size: 1.1rem;
       color: #fff;
-      letter-spacing: 0;
       box-shadow: 0 2px 8px rgba(0,0,0,0.3);
       animation: pop 0.15s ease;
     }
@@ -189,6 +186,43 @@
       font-weight: 700;
     }
 
+    /* Category filter bar */
+    .filter-bar {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.85rem;
+    }
+
+    .filter-btn {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 999px;
+      padding: 0.25rem 0.7rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #94a3b8;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+
+    .filter-btn:hover { border-color: #64748b; color: #e2e8f0; }
+    .filter-btn.active { color: #fff; border-color: transparent; }
+
+    /* Category tag on word chips */
+    .cat-tag {
+      display: inline-block;
+      font-size: 0.58rem;
+      font-weight: 700;
+      padding: 0.1rem 0.3rem;
+      border-radius: 0.2rem;
+      margin-left: 0.3rem;
+      vertical-align: middle;
+      letter-spacing: 0.02em;
+      opacity: 0.9;
+    }
+
     .length-group {
       background: #1e293b;
       border: 1px solid #334155;
@@ -248,12 +282,11 @@
       letter-spacing: 0.04em;
       transition: border-color 0.15s, color 0.15s;
       cursor: default;
+      display: flex;
+      align-items: center;
     }
 
-    .word-chip:hover {
-      border-color: #818cf8;
-      color: #a5b4fc;
-    }
+    .word-chip:hover { border-color: #818cf8; color: #a5b4fc; }
 
     .empty-state {
       text-align: center;
@@ -352,6 +385,7 @@
     <h2>Found Words</h2>
     <span class="total-badge" id="totalBadge">0 words</span>
   </div>
+  <div class="filter-bar" id="filterBar"></div>
   <div id="resultsContainer"></div>
 </div>
 
@@ -369,11 +403,127 @@
   const resultsWrapper   = document.getElementById('resultsWrapper');
   const resultsContainer = document.getElementById('resultsContainer');
   const totalBadge = document.getElementById('totalBadge');
+  const filterBar  = document.getElementById('filterBar');
 
-  let wordList = null;
-  let loading  = false;
+  let wordList    = null;
+  let loading     = false;
+  let lastWords   = [];
+  let activeFilter = 'All';
 
-  // ── Load word list ──────────────────────────────────────────────────────────
+  // ── Word categories ──────────────────────────────────────────────────────────
+  const CATEGORIES = {
+    'Metals':     { color: '#475569', text: '#e2e8f0', words: new Set([
+      'gold','silver','iron','steel','copper','bronze','tin','lead','zinc',
+      'nickel','cobalt','chrome','brass','pewter','platinum','titanium',
+      'alloy','ore','rust','foil','nail','bolt','rivet','ingot','solder',
+      'mercury','barium','radium','cesium','iridium','osmium','bismuth',
+      'indium','gallium','cerium','hafnium','terbium','erbium','holmium',
+      'thulium','lutetium','scandium','vanadium','chromium','manganese',
+      'germanium','selenium','cadmium','antimony','tellurium','xenon',
+      'metal','metals','metallic'
+    ])},
+    'Gems':       { color: '#7e22ce', text: '#ede9fe', words: new Set([
+      'ruby','diamond','emerald','sapphire','topaz','opal','pearl','garnet',
+      'amber','jade','crystal','gem','jewel','agate','onyx','beryl',
+      'amethyst','quartz','zircon','spinel','tourmaline','peridot','citrine',
+      'jasper','chalcedony','moonstone','sunstone','tanzanite','aquamarine',
+      'alexandrite','gems','jewels','gemstone'
+    ])},
+    'Animals':    { color: '#15803d', text: '#dcfce7', words: new Set([
+      'cat','dog','bird','fish','bear','wolf','lion','tiger','eagle','snake',
+      'deer','fox','owl','crow','rat','bat','ant','bee','fly','bug','crab',
+      'frog','toad','duck','hen','cow','pig','ram','ewe','elk','ape','asp',
+      'eel','cod','colt','mare','boar','bull','stag','swan','hawk','wren',
+      'dove','mole','vole','newt','wasp','moth','lark','seal','worm','slug',
+      'clam','snail','hare','lynx','puma','bison','moose','raven','crane',
+      'finch','robin','quail','trout','perch','shark','whale','squid','moth',
+      'beetle','spider','lizard','turtle','parrot','monkey','rabbit','donkey',
+      'horse','zebra','giraffe','leopard','panther','dolphin','penguin',
+      'ostrich','peacock','vulture','sparrow','swallow','pigeon','falcon',
+      'cobra','viper','python','gecko','iguana','ferret','badger','otter',
+      'beaver','weasel','marten','ermine','stoat','skunk','opossum','raccoon'
+    ])},
+    'Colors':     { color: '#b45309', text: '#fef3c7', words: new Set([
+      'red','blue','green','yellow','orange','purple','pink','black','white',
+      'gray','grey','brown','cyan','teal','violet','indigo','scarlet',
+      'crimson','azure','ivory','ebony','tan','rose','coral','mauve','beige',
+      'cream','navy','olive','tawny','auburn','amber','ochre','sienna',
+      'umber','khaki','lilac','maroon','magenta','turquoise','lavender',
+      'chartreuse','vermilion','cobalt','cerulean','fuchsia','chartreuse'
+    ])},
+    'Weapons':    { color: '#b91c1c', text: '#fee2e2', words: new Set([
+      'sword','blade','axe','bow','spear','lance','mace','dagger','knife',
+      'staff','club','dart','arrow','sling','whip','flail','pike','halberd',
+      'rapier','saber','scythe','trident','javelin','crossbow','glaive',
+      'cleaver','cutlass','falchion','broadsword','shortsword','longbow',
+      'sickle','baton','cudgel','stiletto','dirk','machete','katana','wakizashi',
+      'naginata','shuriken','kunai','tomahawk','hatchet','warhammer','maul',
+      'mortar','cannon','pistol','musket','rifle','blade','shield','buckler'
+    ])},
+    'Food':       { color: '#c2410c', text: '#fff7ed', words: new Set([
+      'bread','meat','cake','pie','rice','corn','bean','pea','nut','egg',
+      'milk','ale','wine','salt','herb','root','fruit','berry','plum','pear',
+      'lime','fig','date','oat','rye','tart','stew','soup','broth','cream',
+      'butter','honey','jam','ham','beef','pork','lamb','veal','lard','suet',
+      'flour','yeast','sugar','syrup','sauce','gravy','spice','pepper','ginger',
+      'garlic','onion','leek','carrot','turnip','radish','celery','parsley',
+      'basil','thyme','sage','mint','dill','cumin','turmeric','cinnamon',
+      'nutmeg','clove','anise','fennel','apple','grape','lemon','orange',
+      'mango','peach','melon','cherry','strawberry','blueberry','raspberry',
+      'fish','prawn','shrimp','lobster','oyster','mussel','clam','squid',
+      'pasta','noodle','dumpling','biscuit','cracker','pretzel','wafer',
+      'candy','toffee','fudge','caramel','chocolate','vanilla','custard',
+      'pudding','jelly','yogurt','cheese','bacon','sausage','meatball'
+    ])},
+    'Body Parts': { color: '#1d4ed8', text: '#dbeafe', words: new Set([
+      'arm','leg','head','hand','foot','eye','ear','nose','lip','rib','hip',
+      'jaw','toe','shin','knee','back','neck','heel','palm','fist','brow',
+      'chin','loin','vein','bone','skin','hair','nail','wrist','ankle',
+      'elbow','thumb','calf','lobe','pore','scalp','skull','spine','pelvis',
+      'chest','belly','navel','groin','thigh','kneecap','shoulder','forearm',
+      'eyelid','eyelash','eyebrow','nostril','eardrum','tonsil','tongue',
+      'tooth','teeth','gum','cheek','temple','forehead','occiput','trachea',
+      'larynx','pharynx','esophagus','stomach','intestine','colon','rectum',
+      'liver','kidney','spleen','pancreas','gallbladder','bladder','uterus',
+      'ovary','testicle','prostate','thyroid','adrenal','pituitary','pineal',
+      'muscle','tendon','ligament','cartilage','marrow','plasma','serum'
+    ])},
+    'Magic':      { color: '#5b21b6', text: '#ede9fe', words: new Set([
+      'spell','rune','hex','curse','charm','ritual','potion','wrath','soul',
+      'aura','omen','oracle','relic','ward','seal','glyph','tome','scroll',
+      'sigil','mana','arcane','enchant','mystic','magic','wizard','witch',
+      'warlock','sorcerer','shaman','druid','cleric','mage','conjure','summon',
+      'banish','invoke','dispel','ward','bind','curse','bless','smite',
+      'divine','sacred','profane','unholy','spirit','ghost','wraith','specter',
+      'demon','devil','angel','divine','heaven','hell','limbo','purgatory',
+      'amulet','talisman','totem','idol','effigy','fetish','icon','relic',
+      'altar','shrine','temple','sanctum','crypt','vault','nexus','vortex',
+      'portal','rift','ley','ether','aether','astral','ethereal','spectral',
+      'eldritch','occult','esoteric','arcane','mystical','supernatural'
+    ])},
+    'Nature':     { color: '#065f46', text: '#d1fae5', words: new Set([
+      'tree','rock','water','fire','earth','wind','storm','cloud','rain',
+      'snow','ice','frost','mist','fog','smoke','ash','dust','sand','clay',
+      'mud','peat','coal','wood','bark','leaf','root','seed','spore','pollen',
+      'moss','fern','vine','thorn','bramble','nettle','thistle','clover',
+      'grass','reed','rush','sedge','heather','bracken','gorse','furze',
+      'river','stream','brook','creek','pond','lake','sea','ocean','bay',
+      'gulf','inlet','fjord','delta','estuary','marsh','swamp','bog','fen',
+      'moor','heath','plain','prairie','steppe','savanna','jungle','forest',
+      'grove','copse','thicket','scrub','brush','undergrowth','canopy',
+      'mountain','hill','valley','canyon','gorge','ravine','cliff','crag',
+      'peak','summit','ridge','plateau','mesa','butte','dune','glacier',
+      'volcano','crater','geyser','spring','waterfall','cascade','rapids'
+    ])},
+  };
+
+  // Build reverse lookup: word → category name
+  const wordToCategory = {};
+  for (const [name, data] of Object.entries(CATEGORIES)) {
+    for (const w of data.words) wordToCategory[w] = name;
+  }
+
+  // ── Load word list ───────────────────────────────────────────────────────────
   async function loadWordList() {
     loading = true;
     loaderRow.style.display = 'flex';
@@ -396,7 +546,7 @@
     loading = false;
   }
 
-  // ── Input handling ──────────────────────────────────────────────────────────
+  // ── Input handling ───────────────────────────────────────────────────────────
   input.addEventListener('input', () => {
     const val = input.value.replace(/[^a-zA-Z]/g, '').slice(0, 16);
     input.value = val;
@@ -414,6 +564,7 @@
     renderTiles('');
     errorMsg.textContent = '';
     resultsWrapper.style.display = 'none';
+    activeFilter = 'All';
     updateFindBtn();
     statusText.textContent = wordList
       ? `Ready — ${wordList.length.toLocaleString()} words loaded.`
@@ -435,7 +586,7 @@
     findBtn.disabled = !wordList || input.value.trim().length < 1 || loading;
   }
 
-  // ── Core algorithm ──────────────────────────────────────────────────────────
+  // ── Core algorithm ───────────────────────────────────────────────────────────
   function canForm(word, letterCounts) {
     const need = {};
     for (const ch of word) {
@@ -449,40 +600,68 @@
     const lc = letters.toLowerCase();
     const counts = {};
     for (const ch of lc) counts[ch] = (counts[ch] || 0) + 1;
-
     const maxLen = lc.length;
     const results = [];
-
     for (const word of wordList) {
       if (word.length < 2 || word.length > maxLen) continue;
       if (canForm(word, counts)) results.push(word);
     }
-
     return results;
   }
 
-  // ── Render results ──────────────────────────────────────────────────────────
-  function renderResults(words) {
+  // ── Filter bar ───────────────────────────────────────────────────────────────
+  function renderFilterBar(words) {
+    filterBar.innerHTML = '';
+    // Find which categories appear in the results
+    const present = new Set(words.map(w => wordToCategory[w]).filter(Boolean));
+    if (present.size === 0) return;
+
+    const cats = ['All', ...Object.keys(CATEGORIES).filter(c => present.has(c))];
+
+    for (const cat of cats) {
+      const btn = document.createElement('button');
+      btn.className = 'filter-btn' + (cat === activeFilter ? ' active' : '');
+      btn.textContent = cat === 'All' ? 'All' : `${cat}`;
+
+      if (cat !== 'All') {
+        const data = CATEGORIES[cat];
+        if (activeFilter === cat) {
+          btn.style.background = data.color;
+        }
+      } else if (activeFilter === 'All') {
+        btn.style.background = 'linear-gradient(135deg, #38bdf8, #818cf8)';
+        btn.style.color = '#0f172a';
+      }
+
+      btn.addEventListener('click', () => {
+        activeFilter = cat;
+        renderFilterBar(lastWords);
+        renderWordGroups(lastWords);
+      });
+
+      filterBar.appendChild(btn);
+    }
+  }
+
+  // ── Render results ───────────────────────────────────────────────────────────
+  function renderWordGroups(words) {
     resultsContainer.innerHTML = '';
 
-    if (words.length === 0) {
-      resultsWrapper.style.display = 'block';
-      totalBadge.textContent = '0 words';
-      resultsContainer.innerHTML = '<div class="empty-state">No valid words found.<br>Try different letters.</div>';
+    const filtered = activeFilter === 'All'
+      ? words
+      : words.filter(w => wordToCategory[w] === activeFilter);
+
+    if (filtered.length === 0) {
+      resultsContainer.innerHTML = '<div class="empty-state">No words in this category.<br>Try a different filter.</div>';
       return;
     }
 
-    // Group by length
     const groups = {};
-    for (const w of words) {
+    for (const w of filtered) {
       (groups[w.length] = groups[w.length] || []).push(w);
     }
 
-    // Sort lengths descending
     const lengths = Object.keys(groups).map(Number).sort((a, b) => b - a);
-
-    totalBadge.textContent = `${words.length.toLocaleString()} word${words.length !== 1 ? 's' : ''}`;
-    resultsWrapper.style.display = 'block';
 
     for (const len of lengths) {
       const group = groups[len].sort();
@@ -501,10 +680,22 @@
 
       const grid = document.createElement('div');
       grid.className = 'word-grid';
+
       for (const w of group) {
         const chip = document.createElement('div');
         chip.className = 'word-chip';
         chip.textContent = w;
+
+        const cat = wordToCategory[w];
+        if (cat) {
+          const tag = document.createElement('span');
+          tag.className = 'cat-tag';
+          tag.textContent = cat;
+          tag.style.background = CATEGORIES[cat].color;
+          tag.style.color = CATEGORIES[cat].text;
+          chip.appendChild(tag);
+        }
+
         grid.appendChild(chip);
       }
 
@@ -514,7 +705,26 @@
     }
   }
 
-  // ── Find button ─────────────────────────────────────────────────────────────
+  function renderResults(words) {
+    lastWords = words;
+    activeFilter = 'All';
+    resultsContainer.innerHTML = '';
+
+    if (words.length === 0) {
+      resultsWrapper.style.display = 'block';
+      filterBar.innerHTML = '';
+      totalBadge.textContent = '0 words';
+      resultsContainer.innerHTML = '<div class="empty-state">No valid words found.<br>Try different letters.</div>';
+      return;
+    }
+
+    totalBadge.textContent = `${words.length.toLocaleString()} word${words.length !== 1 ? 's' : ''}`;
+    resultsWrapper.style.display = 'block';
+    renderFilterBar(words);
+    renderWordGroups(words);
+  }
+
+  // ── Find button ──────────────────────────────────────────────────────────────
   findBtn.addEventListener('click', () => {
     const letters = input.value.trim();
     if (!letters || !wordList) return;
@@ -529,7 +739,6 @@
     statusText.textContent = '';
     resultsWrapper.style.display = 'none';
 
-    // Yield to browser to show button state, then search
     setTimeout(() => {
       const t0 = performance.now();
       const words = findWords(letters);
