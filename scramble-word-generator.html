@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scramble Word Generator</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      background: linear-gradient(135deg, #38bdf8, #818cf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.25rem;
+    }
+
+    .subtitle {
+      color: #64748b;
+      font-size: 0.9rem;
+      margin-bottom: 2rem;
+    }
+
+    .card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 1rem;
+      padding: 1.75rem;
+      width: 100%;
+      max-width: 640px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+
+    .input-row {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .letter-input {
+      flex: 1;
+      background: #0f172a;
+      border: 2px solid #334155;
+      border-radius: 0.6rem;
+      padding: 0.75rem 1rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      color: #f0f9ff;
+      text-transform: uppercase;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .letter-input:focus {
+      border-color: #38bdf8;
+    }
+
+    .letter-input::placeholder {
+      color: #334155;
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      font-size: 1rem;
+    }
+
+    .btn {
+      background: linear-gradient(135deg, #38bdf8, #818cf8);
+      border: none;
+      border-radius: 0.6rem;
+      padding: 0.75rem 1.25rem;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #0f172a;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+      white-space: nowrap;
+    }
+
+    .btn:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
+    .btn:active:not(:disabled) { transform: translateY(0); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .btn-clear {
+      background: #334155;
+      color: #94a3b8;
+      padding: 0.75rem 0.9rem;
+      font-size: 1.1rem;
+    }
+
+    .char-tiles {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 1rem;
+      min-height: 2.5rem;
+    }
+
+    .tile {
+      background: linear-gradient(135deg, #1d4ed8, #6d28d9);
+      border-radius: 0.4rem;
+      width: 2.4rem;
+      height: 2.4rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: #fff;
+      letter-spacing: 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      animation: pop 0.15s ease;
+    }
+
+    @keyframes pop {
+      from { transform: scale(0.7); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+
+    .status-bar {
+      margin-top: 1rem;
+      font-size: 0.85rem;
+      color: #64748b;
+      min-height: 1.2em;
+    }
+
+    .status-bar .highlight { color: #38bdf8; font-weight: 600; }
+
+    .loader {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #64748b;
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
+    }
+
+    .spinner {
+      width: 14px; height: 14px;
+      border: 2px solid #334155;
+      border-top-color: #38bdf8;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Results */
+    .results-wrapper {
+      width: 100%;
+      max-width: 640px;
+      margin-top: 1.5rem;
+    }
+
+    .results-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+    }
+
+    .results-header h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .total-badge {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 999px;
+      padding: 0.2rem 0.7rem;
+      font-size: 0.8rem;
+      color: #38bdf8;
+      font-weight: 700;
+    }
+
+    .length-group {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 0.75rem;
+      margin-bottom: 0.75rem;
+      overflow: hidden;
+    }
+
+    .length-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.6rem 1rem;
+      background: #0f172a;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.15s;
+    }
+
+    .length-header:hover { background: #172033; }
+
+    .length-label {
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: #818cf8;
+    }
+
+    .length-count {
+      font-size: 0.78rem;
+      color: #64748b;
+    }
+
+    .chevron {
+      font-size: 0.7rem;
+      color: #475569;
+      transition: transform 0.2s;
+    }
+
+    .length-group.collapsed .chevron { transform: rotate(-90deg); }
+    .length-group.collapsed .word-grid { display: none; }
+
+    .word-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      padding: 0.75rem 1rem;
+    }
+
+    .word-chip {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 0.4rem;
+      padding: 0.3rem 0.6rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #cbd5e1;
+      letter-spacing: 0.04em;
+      transition: border-color 0.15s, color 0.15s;
+      cursor: default;
+    }
+
+    .word-chip:hover {
+      border-color: #818cf8;
+      color: #a5b4fc;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 2rem;
+      color: #475569;
+      font-size: 0.9rem;
+    }
+
+    .error-msg {
+      color: #f87171;
+      font-size: 0.82rem;
+      margin-top: 0.4rem;
+    }
+
+    footer {
+      margin-top: 2rem;
+      color: #334155;
+      font-size: 0.75rem;
+    }
+  </style>
+</head>
+<body>
+
+<h1>SCRAMBLE</h1>
+<p class="subtitle">Find every valid word hiding in your letters</p>
+
+<div class="card">
+  <div class="input-row">
+    <input
+      id="letterInput"
+      class="letter-input"
+      type="text"
+      maxlength="16"
+      placeholder="Enter up to 16 letters…"
+      autocomplete="off"
+      autocorrect="off"
+      spellcheck="false"
+    />
+    <button class="btn" id="findBtn" disabled>Find Words</button>
+    <button class="btn btn-clear" id="clearBtn" title="Clear">✕</button>
+  </div>
+
+  <div class="char-tiles" id="tiles"></div>
+  <div id="errorMsg" class="error-msg"></div>
+
+  <div class="status-bar" id="statusBar">
+    <span id="statusText">Enter letters above to begin.</span>
+  </div>
+
+  <div id="loaderRow" class="loader" style="display:none;">
+    <div class="spinner"></div>
+    <span id="loaderText">Loading word list…</span>
+  </div>
+</div>
+
+<div class="results-wrapper" id="resultsWrapper" style="display:none;">
+  <div class="results-header">
+    <h2>Found Words</h2>
+    <span class="total-badge" id="totalBadge">0 words</span>
+  </div>
+  <div id="resultsContainer"></div>
+</div>
+
+<footer>Word list: ~370k English words · Minimum word length: 2</footer>
+
+<script>
+  const input    = document.getElementById('letterInput');
+  const findBtn  = document.getElementById('findBtn');
+  const clearBtn = document.getElementById('clearBtn');
+  const tilesEl  = document.getElementById('tiles');
+  const statusText = document.getElementById('statusText');
+  const loaderRow  = document.getElementById('loaderRow');
+  const loaderText = document.getElementById('loaderText');
+  const errorMsg   = document.getElementById('errorMsg');
+  const resultsWrapper   = document.getElementById('resultsWrapper');
+  const resultsContainer = document.getElementById('resultsContainer');
+  const totalBadge = document.getElementById('totalBadge');
+
+  let wordList = null;
+  let loading  = false;
+
+  // ── Load word list ──────────────────────────────────────────────────────────
+  async function loadWordList() {
+    loading = true;
+    loaderRow.style.display = 'flex';
+    loaderText.textContent  = 'Loading word list…';
+    statusText.textContent  = '';
+
+    try {
+      const url = 'https://raw.githubusercontent.com/FarukIb/word-unscrambler/main/dictionary.txt';
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('Network error');
+      const text = await res.text();
+      wordList = text.split('\n').map(w => w.trim().toLowerCase()).filter(w => w.length >= 2);
+      loaderRow.style.display = 'none';
+      statusText.textContent  = `Ready — ${wordList.length.toLocaleString()} words loaded.`;
+      updateFindBtn();
+    } catch (e) {
+      loaderRow.style.display = 'none';
+      statusText.innerHTML = '<span style="color:#f87171">Failed to load word list. Check your internet connection and refresh.</span>';
+    }
+    loading = false;
+  }
+
+  // ── Input handling ──────────────────────────────────────────────────────────
+  input.addEventListener('input', () => {
+    const val = input.value.replace(/[^a-zA-Z]/g, '').slice(0, 16);
+    input.value = val;
+    renderTiles(val);
+    updateFindBtn();
+    errorMsg.textContent = '';
+  });
+
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !findBtn.disabled) findBtn.click();
+  });
+
+  clearBtn.addEventListener('click', () => {
+    input.value = '';
+    renderTiles('');
+    errorMsg.textContent = '';
+    resultsWrapper.style.display = 'none';
+    updateFindBtn();
+    statusText.textContent = wordList
+      ? `Ready — ${wordList.length.toLocaleString()} words loaded.`
+      : 'Enter letters above to begin.';
+    input.focus();
+  });
+
+  function renderTiles(str) {
+    tilesEl.innerHTML = '';
+    for (const ch of str.toUpperCase()) {
+      const t = document.createElement('div');
+      t.className = 'tile';
+      t.textContent = ch;
+      tilesEl.appendChild(t);
+    }
+  }
+
+  function updateFindBtn() {
+    findBtn.disabled = !wordList || input.value.trim().length < 1 || loading;
+  }
+
+  // ── Core algorithm ──────────────────────────────────────────────────────────
+  function canForm(word, letterCounts) {
+    const need = {};
+    for (const ch of word) {
+      need[ch] = (need[ch] || 0) + 1;
+      if ((need[ch] || 0) > (letterCounts[ch] || 0)) return false;
+    }
+    return true;
+  }
+
+  function findWords(letters) {
+    const lc = letters.toLowerCase();
+    const counts = {};
+    for (const ch of lc) counts[ch] = (counts[ch] || 0) + 1;
+
+    const maxLen = lc.length;
+    const results = [];
+
+    for (const word of wordList) {
+      if (word.length < 2 || word.length > maxLen) continue;
+      if (canForm(word, counts)) results.push(word);
+    }
+
+    return results;
+  }
+
+  // ── Render results ──────────────────────────────────────────────────────────
+  function renderResults(words) {
+    resultsContainer.innerHTML = '';
+
+    if (words.length === 0) {
+      resultsWrapper.style.display = 'block';
+      totalBadge.textContent = '0 words';
+      resultsContainer.innerHTML = '<div class="empty-state">No valid words found.<br>Try different letters.</div>';
+      return;
+    }
+
+    // Group by length
+    const groups = {};
+    for (const w of words) {
+      (groups[w.length] = groups[w.length] || []).push(w);
+    }
+
+    // Sort lengths descending
+    const lengths = Object.keys(groups).map(Number).sort((a, b) => b - a);
+
+    totalBadge.textContent = `${words.length.toLocaleString()} word${words.length !== 1 ? 's' : ''}`;
+    resultsWrapper.style.display = 'block';
+
+    for (const len of lengths) {
+      const group = groups[len].sort();
+      const div = document.createElement('div');
+      div.className = 'length-group';
+
+      const header = document.createElement('div');
+      header.className = 'length-header';
+      header.innerHTML = `
+        <span class="length-label">${len}-letter words</span>
+        <div style="display:flex;align-items:center;gap:0.75rem">
+          <span class="length-count">${group.length} word${group.length !== 1 ? 's' : ''}</span>
+          <span class="chevron">▼</span>
+        </div>`;
+      header.addEventListener('click', () => div.classList.toggle('collapsed'));
+
+      const grid = document.createElement('div');
+      grid.className = 'word-grid';
+      for (const w of group) {
+        const chip = document.createElement('div');
+        chip.className = 'word-chip';
+        chip.textContent = w;
+        grid.appendChild(chip);
+      }
+
+      div.appendChild(header);
+      div.appendChild(grid);
+      resultsContainer.appendChild(div);
+    }
+  }
+
+  // ── Find button ─────────────────────────────────────────────────────────────
+  findBtn.addEventListener('click', () => {
+    const letters = input.value.trim();
+    if (!letters || !wordList) return;
+
+    if (!/^[a-zA-Z]+$/.test(letters)) {
+      errorMsg.textContent = 'Only letters A–Z are allowed.';
+      return;
+    }
+
+    findBtn.disabled = true;
+    findBtn.textContent = 'Searching…';
+    statusText.textContent = '';
+    resultsWrapper.style.display = 'none';
+
+    // Yield to browser to show button state, then search
+    setTimeout(() => {
+      const t0 = performance.now();
+      const words = findWords(letters);
+      const ms = (performance.now() - t0).toFixed(0);
+
+      renderResults(words);
+      statusText.innerHTML = words.length > 0
+        ? `Found <span class="highlight">${words.length.toLocaleString()} words</span> in ${ms}ms.`
+        : `No words found in ${ms}ms.`;
+
+      findBtn.textContent = 'Find Words';
+      updateFindBtn();
+    }, 30);
+  });
+
+  // ── Init ─────────────────────────────────────────────────────────────────────
+  loadWordList();
+</script>
+</body>
+</html>
