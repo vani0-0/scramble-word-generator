@@ -377,24 +377,34 @@
     for (const w of data.words) wordToCategory[w] = name;
 
   async function loadWordList() {
-    try {
-      const res = await fetch('https://raw.githubusercontent.com/FarukIb/word-unscrambler/main/dictionary.txt');
-      if (!res.ok) throw new Error();
-      const text = await res.text();
-      wordList = text.split('\n').map(w => w.trim().toLowerCase()).filter(w => w.length >= 2);
-      wordSet   = new Set(wordList);
-      document.getElementById('globalLoader').style.display = 'none';
-      document.getElementById('statusText').textContent = `Ready — ${wordList.length.toLocaleString()} words loaded.`;
-      updateFindBtn();
-      document.getElementById('wgAddBtn').disabled  = false;
-      document.getElementById('wgReset').disabled   = false;
-      document.getElementById('lbNew').disabled     = false;
-      document.getElementById('lbSubmit').disabled  = false;
-      document.getElementById('lbSuggestBtn').disabled = false;
-      initLetterBlocks();
-    } catch {
-      document.getElementById('globalLoader').innerHTML = '<span style="color:#f87171">Failed to load word list. Refresh to retry.</span>';
+    const SOURCES = [
+      'https://raw.githubusercontent.com/FarukIb/word-unscrambler/main/dictionary.txt',
+      'https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.txt',
+    ];
+    let text = null;
+    for (const url of SOURCES) {
+      try {
+        const res = await fetch(url);
+        if (!res.ok) continue;
+        text = await res.text();
+        break;
+      } catch { continue; }
     }
+    if (!text) {
+      document.getElementById('globalLoader').innerHTML = '<span style="color:#f87171">Failed to load word list. Check your connection and refresh to retry.</span>';
+      return;
+    }
+    wordList = text.split('\n').map(w => w.trim().toLowerCase()).filter(w => w.length >= 2);
+    wordSet   = new Set(wordList);
+    document.getElementById('globalLoader').style.display = 'none';
+    document.getElementById('statusText').textContent = `Ready — ${wordList.length.toLocaleString()} words loaded.`;
+    updateFindBtn();
+    document.getElementById('wgAddBtn').disabled  = false;
+    document.getElementById('wgReset').disabled   = false;
+    document.getElementById('lbNew').disabled     = false;
+    document.getElementById('lbSubmit').disabled  = false;
+    document.getElementById('lbSuggestBtn').disabled = false;
+    initLetterBlocks();
   }
 
   // ═══ MODE SWITCHING ═══════════════════════════════════════════
